@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+      "declaration": true,
+      "target": "es2016",
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      "experimentalDecorators": true,
+      "esModuleInterop": true,
+      "lib": [
+          "es2017",
+          "esnext"
+      ],
+      "types": [
+          "node",
+      ],
+      "outDir": "./build",
+      "sourceMap": true,
+      "skipLibCheck": true
+  },
+  "include": [
+      "src/**/*.ts"
+  ],
+  "exclude": [
+      "node_modules",
+      "**/*.spec.ts"
+  ]
+}

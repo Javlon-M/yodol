@@ -5,7 +5,9 @@ export class Card {
         private front: string,
         private back: string,
         private level: CardLevels,
-        private duration: number
+        private schedulePeriod: number,
+        private createdAt: number,
+        private levelUpdatedAt: number
     ){}
 
     public getId(): string {
@@ -28,8 +30,16 @@ export class Card {
         return this.level
     }
     
-    public getDuration(): number {
-        return this.duration
+    public getSchedulePeriod(): number {
+        return this.schedulePeriod
+    }
+    
+    public getCreatedAt(): number {
+        return this.createdAt
+    }
+    
+    public getLevelUpdatedAt(): number {
+        return this.levelUpdatedAt
     }
 }
 

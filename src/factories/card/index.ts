@@ -15,7 +15,9 @@ export class CardFactoryImpl implements CardFactory {
             params.front,
             params.back,
             params.level,
-            params.duration
+            params.schedulePeriod,
+            params.createAt,
+            params.levelUpdatedAt
         )
     }
 }
@@ -26,5 +28,7 @@ interface Params{
     front: string
     back: string
     level: Domain.CardLevels
-    duration: number
+    schedulePeriod: number
+    createAt: number
+    levelUpdatedAt: number
 }

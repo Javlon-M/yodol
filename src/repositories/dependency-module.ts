@@ -1,6 +1,11 @@
 import { ContainerModule, interfaces } from "inversify"
 
+import * as Repositories from "../repositories"
+
+import { RepositorySymbols } from "./dependency-symbols"
+
 
 export const RepositoryContainerModule = new ContainerModule((bind: interfaces.Bind) => {
-    // bind<Repositories.CardRepository>(RepositorySymbols.CardFactory).to(Repositories.CardRepositoryImpl)
+    bind<Repositories.CardRepository>(RepositorySymbols.CardRepository)
+    .to(Repositories.CardRepositoryImpl).inSingletonScope()
 })

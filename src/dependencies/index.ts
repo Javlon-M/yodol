@@ -2,6 +2,7 @@ import { Container } from "inversify"
 
 import { FactoryContainerModule } from "../factories/dependency-module"
 import { RepositoryContainerModule } from "../repositories/dependency-module"
+import { ComponentsContainerModule } from "../components/dependency-module"
 
 
 export interface Dependencies {
@@ -26,6 +27,7 @@ export class DependenciesImpl implements Dependencies {
     }
 
     public async load(): Promise<void> {
+        this.container.load(ComponentsContainerModule)
         this.container.load(FactoryContainerModule)
         this.container.load(RepositoryContainerModule)
     }

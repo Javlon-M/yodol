@@ -6,9 +6,9 @@ export interface CardDocument extends Document {
     front: string
     back: string
     level: number
-    duration: number
-    create_at: number
-    last_level_update: number
+    schedule_period: number
+    created_at: number
+    level_updated_at: number
 }
 
 const CardSchema = new Schema<CardDocument>(
@@ -29,15 +29,15 @@ const CardSchema = new Schema<CardDocument>(
             type: Number,
             required: true
         },
-        duration: {
+        schedule_period: {
             type: Number,
             required: false
         },
-        create_at: {
+        created_at: {
             type: Number,
             required: true
         },
-        last_level_update: {
+        level_updated_at: {
             type: Number,
             required: false
         }

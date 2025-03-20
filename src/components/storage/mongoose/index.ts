@@ -1,6 +1,7 @@
 import * as Inversify from "inversify"
 import mongoose, { Connection } from "mongoose"
 
+import * as Models from "./models"
 import * as Infrastructure from "../../../infrastructure"
 
 
@@ -51,5 +52,9 @@ export class MongooseStorageImpl implements Infrastructure.Storage {
         catch(error) {
             throw new Error("MongoDB: Disconnecting error: ", error)
         }
+    }
+
+    public getCardsCollection(): typeof Models.CardModel {
+        return Models.CardModel
     }
 }

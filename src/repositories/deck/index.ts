@@ -9,6 +9,7 @@ import { ComponentsSymbols } from "../../components/dependency-symbols"
 
 export interface DeckRepository {
     create(params: CreateParams): Promise<Domain.Deck>
+    remove(params: RemoveParams): Promise<Domain.Deck>
 }
 
 @Inversify.injectable()
@@ -23,6 +24,14 @@ export class DeckRepositoryImpl implements DeckRepository {
             user_id: params.userId,
             title: params.title,
             description: params.description
+        })
+
+        return this.toDomainEntity(deck)
+    }
+
+    public async remove(params: RemoveParams): Promise<Domain.Deck> {
+        const deck = await this.storage.getDecksCollection().findOneAndDelete({
+            _id: params.id
         })
 
         return this.toDomainEntity(deck)
@@ -44,4 +53,8 @@ interface CreateParams {
     userId: string
     title: string
     description?: string
+}
+
+interface RemoveParams {
+    id: string
 }

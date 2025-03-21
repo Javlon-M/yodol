@@ -7,4 +7,6 @@ export interface Storage {
     close(): Promise<void>
 
     getCardsCollection(): typeof Models.CardModel
+
+    getDecksCollection(): typeof Models.DeckModel
 }

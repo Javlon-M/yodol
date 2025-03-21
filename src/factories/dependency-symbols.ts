@@ -1,3 +1,4 @@
 export const FactorySymbols = {
-    CardFactory: Symbol("CardFactory")
+    CardFactory: Symbol("CardFactory"),
+    DeckFactory: Symbol("DeckFactory")
 }

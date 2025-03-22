@@ -1,7 +1,8 @@
 import { Deck } from "../../domain"
 import { DeckRepository } from "../../repositories"
+import { BaseInterfaceForUseCases } from "../base-interface"
 
-export class RemoveDeckUseCase {
+export class RemoveDeckUseCase implements BaseInterfaceForUseCases<string, Deck> {
   constructor(private deckRepository: DeckRepository) {}
 
   async execute(deckId: string): Promise<Deck> {

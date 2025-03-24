@@ -5,7 +5,7 @@ import { BaseInterfaceForUseCases } from "../base-interface"
 export class RemoveDeckUseCase implements BaseInterfaceForUseCases<string, Deck> {
   constructor(private deckRepository: DeckRepository) {}
 
-  async execute(deckId: string): Promise<Deck> {
+  public async execute(deckId: string): Promise<Deck> {
     const deck = await this.deckRepository.remove({id: deckId})
 
     if (!deck) {

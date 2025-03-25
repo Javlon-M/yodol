@@ -5,7 +5,7 @@ import { Deck } from "../../domain"
 import { RepositorySymbols } from "../../repositories/dependency-symbols"
 
 export interface RemoveDeckUseCase {
-  execute(deckId: string): Promise<Deck>
+  execute(params: Params): Promise<Deck>
 }
 
 @Inversify.injectable()
@@ -14,8 +14,8 @@ export class RemoveDeckUseCaseImpl implements RemoveDeckUseCase {
     @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
     ) {}
 
-  public async execute(deckId: string): Promise<Deck> {
-    const deck = await this.deckRepository.remove({id: deckId})
+  public async execute(params: Params): Promise<Deck> {
+    const deck = await this.deckRepository.remove({id: params.deckId})
 
     if (!deck) {
       throw new Error('Deck not found')
@@ -23,4 +23,8 @@ export class RemoveDeckUseCaseImpl implements RemoveDeckUseCase {
 
     return deck
   }
+}
+
+interface Params {
+  deckId: string
 }

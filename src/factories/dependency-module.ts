@@ -10,4 +10,7 @@ export const FactoryContainerModule = new ContainerModule((bind: interfaces.Bind
 
     bind<Factories.DeckFactory>(FactorySymbols.DeckFactory)
     .to(Factories.DeckFactoryImpl).inSingletonScope()
+
+    bind<Factories.IdentifierFactory>(FactorySymbols.IdentifierFactory)
+    .to(Factories.IdentifierFactoryImpl).inSingletonScope()
 })

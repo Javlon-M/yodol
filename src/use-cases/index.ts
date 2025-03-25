@@ -1,1 +1,1 @@
-import "./remove-deck"
+export * from "./deck"

@@ -1,11 +1,10 @@
 import * as Inversify from "inversify"
 import * as Repositories from "../../../repositories"
 
-import { Deck } from "../../../domain"
 import { RepositorySymbols } from "../../../repositories/dependency-symbols"
 
 export interface RemoveDeckUseCase {
-  remove(params: Params): Promise<Deck>
+  remove(params: Params): Promise<Response>
 }
 
 @Inversify.injectable()
@@ -14,17 +13,22 @@ export class RemoveDeckUseCaseImpl implements RemoveDeckUseCase {
     @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
     ) {}
 
-  public async remove(params: Params): Promise<Deck> {
+  public async remove(params: Params): Promise<Response> {
     const deck = await this.deckRepository.remove({id: params.deckId})
 
     if (!deck) {
       throw new Error('Deck not found')
     }
 
-    return deck
+    return { success: true }
   }
 }
 
 interface Params {
   deckId: string
+}
+
+interface Response {
+  success: boolean
+  message?: string
 }

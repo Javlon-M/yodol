@@ -3,6 +3,7 @@ import { Container } from "inversify"
 import { FactoryContainerModule } from "../factories/dependency-module"
 import { RepositoryContainerModule } from "../repositories/dependency-module"
 import { ComponentsContainerModule } from "../components/dependency-module"
+import { UseCaseContainerModule } from "../use-cases/dependency-module"
 
 
 export interface Dependencies {
@@ -30,6 +31,7 @@ export class DependenciesImpl implements Dependencies {
         this.container.load(ComponentsContainerModule)
         this.container.load(FactoryContainerModule)
         this.container.load(RepositoryContainerModule)
+        this.container.load(UseCaseContainerModule)
     }
 
     getItem<T>(symbol: symbol): T {

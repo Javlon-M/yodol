@@ -1,7 +1,10 @@
+import * as Domain from "../../domain"
+
+
 export class Card {
     constructor(
-        private id: string,
-        private deckId: string,
+        private id: Domain.Identifier,
+        private deckId: Domain.Identifier,
         private front: string,
         private back: string,
         private level: CardLevels,
@@ -10,11 +13,11 @@ export class Card {
         private levelUpdatedAt: number
     ){}
 
-    public getId(): string {
+    public getId(): Domain.Identifier {
         return this.id
     }
 
-    public getDeckId(): string {
+    public getDeckId(): Domain.Identifier {
         return this.deckId
     }
 

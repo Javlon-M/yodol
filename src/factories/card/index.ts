@@ -1,6 +1,10 @@
 import * as Inversify from "inversify"
 
 import * as Domain from "../../domain"
+import * as Factories from "../../factories"
+
+import { FactorySymbols } from "../../factories/dependency-symbols"
+
 
 export interface CardFactory {
     construct(params: Params): Domain.Card
@@ -8,10 +12,14 @@ export interface CardFactory {
 
 @Inversify.injectable()
 export class CardFactoryImpl implements CardFactory {
+    constructor(
+        @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory
+    ){}
+
     public construct(params: Params): Domain.Card {
         return new Domain.Card(
-            params.id,
-            params.deckId,
+            this.identifierFactory.construct(params.id),
+            this.identifierFactory.construct(params.deckId),
             params.front,
             params.back,
             params.level,

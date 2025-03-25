@@ -1,3 +1,4 @@
 export const RepositorySymbols = {
-    CardRepository: Symbol("CardRepository")
+    CardRepository: Symbol("CardRepository"),
+    DeckRepository: Symbol("DeckRepository")
 }

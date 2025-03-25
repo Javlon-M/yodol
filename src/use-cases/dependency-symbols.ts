@@ -1,3 +1,7 @@
 export const UseCaseSymbols = {
-    RemoveDeckUseCase: Symbol("RemoveDeckUseCase")
+    // Deck
+    RemoveDeckUseCase: Symbol("RemoveDeckUseCase"),
+
+    // Card
+    CreateCardUseCase: Symbol("CreateCardUseCase"),
 }

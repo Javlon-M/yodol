@@ -1,3 +1,4 @@
 export * from "./card"
 export * from "./deck"
 export * from "./identifier"
+export * from "./user"

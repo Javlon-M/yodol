@@ -1,3 +1,3 @@
 export const UseCaseSymbols = {
-    DeckUseCase: Symbol("DeckUseCase")
+    RemoveDeckUseCase: Symbol("RemoveDeckUseCase")
 }

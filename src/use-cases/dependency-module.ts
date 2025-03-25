@@ -6,6 +6,6 @@ import { UseCaseSymbols } from "./dependency-symbols"
 
 
 export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind) => {
-    bind<Usecase.DeckUseCase>(UseCaseSymbols.DeckUseCase)
-    .to(Usecase.DeckUseCaseImpl).inSingletonScope()
+    bind<Usecase.RemoveDeckUseCase>(UseCaseSymbols.RemoveDeckUseCase)
+    .to(Usecase.RemoveDeckUseCaseImpl).inSingletonScope()
 })

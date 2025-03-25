@@ -1,19 +1,24 @@
 import mongoose, { Document, Schema } from "mongoose"
 
 export interface DeckDocument extends Document {
-    userId: string
+    user_id: string
     title: string
+    active: boolean
     description?: string
 }
 
 const DeckSchema = new Schema<DeckDocument>(
     {
-        userId: {
+        user_id: {
             type: String,
             required: true
         },
         title: {
             type: String,
+            required: true
+        },
+        active: {
+            type: Boolean,
             required: true
         },
         description: {

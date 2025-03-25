@@ -1,9 +1,18 @@
-import { Deck } from "../../domain"
-import { DeckRepository } from "../../repositories"
-import { BaseInterfaceForUseCases } from "../base-interface"
+import * as Inversify from "inversify"
+import * as Repositories from "../../repositories"
 
-export class RemoveDeckUseCase implements BaseInterfaceForUseCases<string, Deck> {
-  constructor(private deckRepository: DeckRepository) {}
+import { Deck } from "../../domain"
+import { RepositorySymbols } from "../../repositories/dependency-symbols"
+
+export interface RemoveDeckUseCase {
+  execute(deckId: string): Promise<Deck>
+}
+
+@Inversify.injectable()
+export class RemoveDeckUseCaseImpl implements RemoveDeckUseCase {
+  constructor(
+    @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
+    ) {}
 
   public async execute(deckId: string): Promise<Deck> {
     const deck = await this.deckRepository.remove({id: deckId})

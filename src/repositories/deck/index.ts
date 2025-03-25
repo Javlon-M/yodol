@@ -21,8 +21,9 @@ export class DeckRepositoryImpl implements DeckRepository {
 
     public async create(params: CreateParams): Promise<Domain.Deck> {
         const deck = await this.storage.getDecksCollection().insertOne({
-            user_id: params.userId,
+            user_id: params.user_id,
             title: params.title,
+            active: params.active,
             description: params.description
         })
 
@@ -42,16 +43,18 @@ export class DeckRepositoryImpl implements DeckRepository {
 
         return this.deckFactory.construct({
             id: deck.id,
-            userId: deck.userId,
+            user_id: deck.user_id,
             title: deck.title,
+            active: deck.active,
             description: deck.description
         })
     }
 }
 
 interface CreateParams {
-    userId: string
+    user_id: string
     title: string
+    active: boolean
     description?: string
 }
 

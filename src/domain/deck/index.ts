@@ -1,8 +1,9 @@
 export class Deck {
     constructor(
         private id: string,
-        private userId: string,
+        private user_id: string,
         private title: string,
+        private active: boolean,
         private description?: string
     ) {}
 
@@ -11,11 +12,15 @@ export class Deck {
     }
 
     public getUserId(): string {
-        return this.userId
+        return this.user_id
     }
 
     public getTitle(): string {
         return this.title
+    }
+
+    public getActive(): boolean {
+        return this.active
     }
 
     public getDescription(): string {

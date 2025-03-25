@@ -11,8 +11,9 @@ export class DeckFactoryImpl implements DeckFactory {
     construct(params: Params): Domain.Deck {
         return new Domain.Deck(
             params.id,
-            params.userId,
+            params.user_id,
             params.title,
+            params.active,
             params.description
         )
     }
@@ -20,7 +21,8 @@ export class DeckFactoryImpl implements DeckFactory {
 
 export interface Params {
     id: string
-    userId: string
+    user_id: string
     title: string
+    active: boolean
     description?: string
 }

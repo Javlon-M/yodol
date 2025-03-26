@@ -19,7 +19,7 @@ export class CardRepositoryImpl implements CardRepository {
     constructor(
         @Inversify.inject(FactorySymbols.CardFactory) private cardFactory: Factories.CardFactory,
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
-    ){}
+    ) { }
 
     public async create(params: CreateParams): Promise<Domain.Card> {
         const card = await this.storage.getCardsCollection().insertOne({

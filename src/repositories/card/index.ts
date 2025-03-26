@@ -11,6 +11,7 @@ import { ComponentsSymbols } from "../../components/dependency-symbols"
 
 export interface CardRepository {
     create(params: CreateParams): Promise<Domain.Card>
+    update(params: EditParams): Promise<Domain.Card>
 }
 
 @Inversify.injectable()
@@ -34,6 +35,34 @@ export class CardRepositoryImpl implements CardRepository {
         return this.toDomainEntity(card)
     }
 
+    public async update(params: EditParams): Promise<Domain.Card> {
+        const filter = { _id: params.id };
+
+        const updateCard = {
+            $set: {
+                deck_id: params.deckId,
+                front: params.front,
+                back: params.back,
+                level: params.level,
+                schedule_period: params.schedulePeriod,
+                created_at: params.createAt,
+                level_updated_at: params.levelUpdatedAt
+            }
+        };
+
+        const card = await this.storage.getCardsCollection().findOneAndUpdate(
+            filter,
+            updateCard,
+            { returnOriginal: false }
+        )
+
+        if (!card) {
+            throw new Error("Card not found");
+        }        
+
+        return this.toDomainEntity(card)
+    }
+
     private toDomainEntity(card: Models.CardDocument): Domain.Card {
         if (!card) return null
 
@@ -51,7 +80,7 @@ export class CardRepositoryImpl implements CardRepository {
 }
 
 
-interface CreateParams {
+export interface CreateParams {
     deckId: string
     front: string
     back: string
@@ -59,4 +88,8 @@ interface CreateParams {
     schedulePeriod: number
     createAt: number
     levelUpdatedAt: number
+}
+
+export interface EditParams extends CreateParams {
+    id: string
 }

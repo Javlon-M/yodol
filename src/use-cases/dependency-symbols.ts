@@ -1,3 +1,4 @@
 export const UseCaseSymbols = {
-    RemoveDeckUseCase: Symbol("RemoveDeckUseCase")
+    RemoveDeckUseCase: Symbol("RemoveDeckUseCase"),
+    EditCardUseCase: Symbol("EditCardUseCase")
 }

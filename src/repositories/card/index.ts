@@ -11,6 +11,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 export interface CardRepository {
     create(params: CreateParams): Promise<Domain.Card>
+    deleteById(id: Domain.Identifier): Promise<Domain.Card>
 }
 
 @Inversify.injectable()
@@ -29,6 +30,14 @@ export class CardRepositoryImpl implements CardRepository {
             schedule_period: params.schedulePeriod,
             created_at: params.createAt,
             level_updated_at: params.levelUpdatedAt
+        })
+
+        return this.toDomainEntity(card)
+    }
+
+    public async deleteById(id: Domain.Identifier): Promise<Domain.Card> {
+        const card = await this.storage.getCardsCollection().findByIdAndDelete<Models.CardDocument>({
+            _id: id
         })
 
         return this.toDomainEntity(card)

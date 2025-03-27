@@ -1,7 +1,7 @@
 import * as Inversify from "inversify"
 import * as Mongoose from "mongoose"
 
-import * as Domain from "../../domain"
+import * as Domain from "app/domain"
 
 
 export interface IdentifierFactory {

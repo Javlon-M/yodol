@@ -1,11 +1,11 @@
 import * as Inversify from "inversify"
 
-import * as Domain from "../../../domain"
-import * as Factories from "../../../factories"
-import * as Repositories from "../../../repositories"
+import * as Domain from "app/domain"
+import * as Factories from "app/factories"
+import * as Repositories from "app/repositories"
 
-import { RepositorySymbols } from "../../../repositories/dependency-symbols"
-import { FactorySymbols } from "../../../factories/dependency-symbols"
+import { RepositorySymbols } from "app/repositories/dependency-symbols"
+import { FactorySymbols } from "app/factories/dependency-symbols"
 
 
 export interface CreateCardUseCase {

@@ -2,7 +2,7 @@ import * as Inversify from "inversify"
 import mongoose, { Connection } from "mongoose"
 
 import * as Models from "./models"
-import * as Infrastructure from "../../../infrastructure"
+import * as Infrastructure from "app/infrastructure"
 
 
 @Inversify.injectable()

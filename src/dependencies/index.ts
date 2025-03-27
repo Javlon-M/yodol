@@ -1,9 +1,9 @@
 import { Container } from "inversify"
 
-import { FactoryContainerModule } from "../factories/dependency-module"
-import { RepositoryContainerModule } from "../repositories/dependency-module"
-import { ComponentsContainerModule } from "../components/dependency-module"
-import { UseCaseContainerModule } from "../use-cases/dependency-module"
+import { FactoryContainerModule } from "app/factories/dependency-module"
+import { RepositoryContainerModule } from "app/repositories/dependency-module"
+import { ComponentsContainerModule } from "app/components/dependency-module"
+import { UseCaseContainerModule } from "app/use-cases/dependency-module"
 
 
 export interface Dependencies {

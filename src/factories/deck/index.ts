@@ -1,6 +1,6 @@
 import * as Inversify from "inversify"
 
-import * as Domain from "../../domain"
+import * as Domain from "app/domain"
 
 export interface DeckFactory {
     construct(params: Params): Domain.Deck

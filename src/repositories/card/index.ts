@@ -1,12 +1,12 @@
 import * as Inversify from "inversify"
 
-import * as Domain from "../../domain"
-import * as Models from "../../components"
-import * as Factories from "../../factories"
-import * as Infrastructure from "../../infrastructure"
+import * as Domain from "app/domain"
+import * as Models from "app/components"
+import * as Factories from "app/factories"
+import * as Infrastructure from "app/infrastructure"
 
-import { FactorySymbols } from "../../factories/dependency-symbols"
-import { ComponentsSymbols } from "../../components/dependency-symbols"
+import { FactorySymbols } from "app/factories/dependency-symbols"
+import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface CardRepository {
@@ -17,8 +17,8 @@ export interface CardRepository {
 export class CardRepositoryImpl implements CardRepository {
     constructor(
         @Inversify.inject(FactorySymbols.CardFactory) private cardFactory: Factories.CardFactory,
-        @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage
-    ){}
+        @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
+    ) { }
 
     public async create(params: CreateParams): Promise<Domain.Card> {
         const card = await this.storage.getCardsCollection().insertOne({
@@ -49,7 +49,6 @@ export class CardRepositoryImpl implements CardRepository {
         })
     }
 }
-
 
 interface CreateParams {
     deckId: string

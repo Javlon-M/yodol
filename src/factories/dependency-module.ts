@@ -1,6 +1,6 @@
 import { ContainerModule, interfaces } from "inversify"
 
-import * as Factories from "../factories/"
+import * as Factories from "app/factories"
 
 import { FactorySymbols } from "./dependency-symbols"
 

@@ -1,7 +1,7 @@
 import { ContainerModule, interfaces } from "inversify"
 
-import * as Infrastructure from "../infrastructure"
-import * as Components from "../components"
+import * as Infrastructure from "app/infrastructure"
+import * as Components from "app/components"
 
 import { ComponentsSymbols } from "./dependency-symbols"
 

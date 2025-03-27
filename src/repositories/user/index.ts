@@ -44,7 +44,7 @@ export class UserRepositoryImpl implements UserRepository {
 
     public async findById(id: Domain.Identifier): Promise<Domain.User> {
         const user = await this.storage.getUsersCollection().findById<Models.UserDocument>({
-            _id: id
+            _id: id.toStorageValue()
         })
 
         return this.toDomainEntity(user)

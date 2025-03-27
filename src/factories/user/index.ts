@@ -1,14 +1,16 @@
-import {User} from "app/domain";
-import {injectable} from "inversify";
+import * as Inversify from "inversify";
+
+import * as Domain from "app/domain";
+
 
 export interface UserFactory {
-    construct: (params:Params) => User;
+    construct(params: Params): Domain.User
 }
 
-@injectable()
+@Inversify.injectable()
 export class UserFactoryImpl implements UserFactory {
-    construct(params: Params): User {
-        return new User(
+    construct(params: Params): Domain.User {
+        return new Domain.User(
             params.id,
             params.phone,
             params.username,
@@ -21,7 +23,7 @@ export class UserFactoryImpl implements UserFactory {
 }
 
 interface Params {
-     id: string,
+     id: Domain.Identifier,
      phone: string,
      username: string,
      name: string,

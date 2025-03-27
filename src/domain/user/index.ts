@@ -1,6 +1,8 @@
+import * as Domain from "app/domain";
+
 export class User {
     constructor(
-        private id: string,
+        private id: Domain.Identifier,
         private phone: string,
         private username: string,
         private name: string,
@@ -9,7 +11,7 @@ export class User {
         private email?: string,
     ){}
 
-    public getId(): string {
+    public getId(): Domain.Identifier {
         return this.id
     }
 

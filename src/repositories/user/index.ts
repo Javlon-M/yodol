@@ -1,25 +1,26 @@
-import {inject, injectable} from "inversify";
-import {User} from "app/domain";
-import {UserFactory} from "app/factories";
-import {Storage} from "app/infrastructure";
-import {UserDocument} from "app/components";
-import {FactorySymbols} from "app/factories/dependency-symbols";
-import {ComponentsSymbols} from "app/components/dependency-symbols";
+import * as Inversify from "inversify"
+
+import * as Domain from "app/domain"
+import * as Models from "app/components"
+import * as Factories from "app/factories"
+
+import { FactorySymbols } from "app/factories/dependency-symbols"
+import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface UserRepository {
-    create(params: CreateParams): Promise<User>
-    remove(params: RemoveParams): Promise<void>
+    create(params: CreateParams): Promise<Domain.User>
+    remove(params: RemoveParams): Promise<Domain.User>
 }
 
-@injectable()
+@Inversify.injectable()
 export class UserRepositoryImpl implements UserRepository {
     constructor(
-        @inject(FactorySymbols.DeckFactory) private userFactory: UserFactory,
-        @inject(ComponentsSymbols.MongooseStorage) private storage: Storage,
+        @Inversify.inject(FactorySymbols.DeckFactory) private userFactory:Factories.UserFactory,
+        @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Storage,
     ){}
 
-    public async create(params: CreateParams): Promise<User> {
+    public async create(params: CreateParams): Promise<Domain.User> {
         const user = await this.storage.getUsersCollection().insertOne({
             phone: params.phone,
             username: params.username,
@@ -32,13 +33,13 @@ export class UserRepositoryImpl implements UserRepository {
         return this.toDomainEntity(user)
     }
 
-    public async remove(params: RemoveParams): Promise<void> {
-        await this.storage.getUsersCollection().findOneAndDelete({
+    public async remove(params: RemoveParams): Promise<Domain.User> {
+        return await this.storage.getUsersCollection().findOneAndDelete({
             _id: params.id
         })
     }
 
-    private toDomainEntity(user: UserDocument): User {
+    private toDomainEntity(user: Models.UserDocument): Domain.User {
         if (!user) return null
 
         return this.userFactory.construct({

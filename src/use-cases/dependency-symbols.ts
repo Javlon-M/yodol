@@ -5,4 +5,5 @@ export const UseCaseSymbols = {
 
     // Card
     CreateCardUseCase: Symbol("CreateCardUseCase"),
+    DeleteCardUseCase: Symbol("DeleteCardUseCase"),
 }

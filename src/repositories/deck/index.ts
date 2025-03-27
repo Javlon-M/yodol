@@ -33,7 +33,7 @@ export class DeckRepositoryImpl implements DeckRepository {
     }
 
     public async remove(params: RemoveParams): Promise<Domain.Deck> {
-        const deck = await this.storage.getDecksCollection().findOneAndDelete({
+        const deck = await this.storage.getDecksCollection().findOneAndDelete<Models.DeckDocument>({
             _id: params.id
         })
 
@@ -41,7 +41,7 @@ export class DeckRepositoryImpl implements DeckRepository {
     }
 
     public async findById(id: Domain.Identifier): Promise<Domain.Deck> {
-        const deck = await this.storage.getDecksCollection().findById({
+        const deck = await this.storage.getDecksCollection().findById<Models.DeckDocument>({
             _id: id.toStorageValue()
         })
 

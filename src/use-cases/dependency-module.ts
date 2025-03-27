@@ -13,6 +13,9 @@ export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind
     bind<Usecases.GetOneDeckUseCase>(UseCaseSymbols.GetOneDeckUseCase)
     .to(Usecases.GetOneDeckUseCaseImpl).inSingletonScope()
 
+    bind<Usecases.GetDecksUseCase>(UseCaseSymbols.GetDecksUseCase)
+    .to(Usecases.GetDecksUseCaseImpl).inSingletonScope()
+
     // Card
     bind<Usecases.CreateCardUseCase>(UseCaseSymbols.CreateCardUseCase)
     .to(Usecases.CreateCardUseCaseImpl).inSingletonScope()

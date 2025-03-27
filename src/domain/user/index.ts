@@ -8,7 +8,7 @@ export class User {
         private name: string,
         private telegramId: string,
         private createdAt: number,
-        private email?: string,
+        private email: string,
     ){}
 
     public getId(): Domain.Identifier {
@@ -31,7 +31,7 @@ export class User {
         return this.telegramId
     }
     
-    public getEmail(): string | undefined {
+    public getEmail(): string {
         return this.email
     }
     

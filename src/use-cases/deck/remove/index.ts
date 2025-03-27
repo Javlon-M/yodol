@@ -1,7 +1,7 @@
 import * as Inversify from "inversify"
-import * as Repositories from "../../../repositories"
+import * as Repositories from "app/repositories"
 
-import { RepositorySymbols } from "../../../repositories/dependency-symbols"
+import { RepositorySymbols } from "app/repositories/dependency-symbols"
 
 export interface RemoveDeckUseCase {
   remove(params: Params): Promise<Response>

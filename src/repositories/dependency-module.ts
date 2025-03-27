@@ -1,6 +1,6 @@
 import { ContainerModule, interfaces } from "inversify"
 
-import * as Repositories from "../repositories"
+import * as Repositories from "app/repositories"
 
 import { RepositorySymbols } from "./dependency-symbols"
 

@@ -1,4 +1,4 @@
-import * as Models from "../../../components/"
+import * as Models from "app/components"
 
 
 export interface Storage {

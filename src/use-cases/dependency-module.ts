@@ -1,6 +1,6 @@
 import { ContainerModule, interfaces } from "inversify"
 
-import * as Usecase from "../use-cases"
+import * as Usecase from "app/use-cases"
 
 import { UseCaseSymbols } from "./dependency-symbols"
 

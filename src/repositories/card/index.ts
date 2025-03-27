@@ -39,15 +39,7 @@ export class CardRepositoryImpl implements CardRepository {
         const filter = { _id: params.id };
 
         const updateCard = {
-            $set: {
-                deck_id: params.deckId,
-                front: params.front,
-                back: params.back,
-                level: params.level,
-                schedule_period: params.schedulePeriod,
-                created_at: params.createAt,
-                level_updated_at: params.levelUpdatedAt
-            }
+            $set: params
         };
 
         const card = await this.storage.getCardsCollection().findOneAndUpdate(
@@ -55,10 +47,6 @@ export class CardRepositoryImpl implements CardRepository {
             updateCard,
             { returnOriginal: false }
         )
-
-        if (!card) {
-            throw new Error("Card not found");
-        }        
 
         return this.toDomainEntity(card)
     }
@@ -90,6 +78,6 @@ export interface CreateParams {
     levelUpdatedAt: number
 }
 
-export interface EditParams extends CreateParams {
+export interface EditParams extends Partial<CreateParams> {
     id: string
 }

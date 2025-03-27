@@ -17,7 +17,9 @@ export class EditCardUseCaseImpl implements EditCardUseCase {
 
     public async execute(params: Repositories.EditParams): Promise<Card> {
         const card = await this.cardRepository.update(params)
-
+        if (!card) {
+            throw new Error("Card not found");
+        }
         return card
     }
 }

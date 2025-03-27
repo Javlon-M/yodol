@@ -1,8 +1,8 @@
 import * as Inversify from 'inversify';
-import * as Repositories from '../../../repositories';
+import * as Repositories from 'app/repositories';
 
-import { RepositorySymbols } from '../../../repositories/dependency-symbols';
-import { Card } from '../../../domain';
+import { RepositorySymbols } from 'app/repositories/dependency-symbols';
+import { Card } from 'app/domain';
 
 
 export interface EditCardUseCase {

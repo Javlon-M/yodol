@@ -8,8 +8,10 @@ import * as Infrastructure from "app/infrastructure"
 import { FactorySymbols } from "app/factories/dependency-symbols"
 import { ComponentsSymbols } from "app/components/dependency-symbols"
 
+
 export interface DeckRepository {
     create(params: CreateParams): Promise<Domain.Deck>
+    update(params: UpdateParams): Promise<Domain.Deck>
     remove(params: RemoveParams): Promise<Domain.Deck>
     findByUserId(userId: Domain.Identifier): Promise<Domain.Deck[]>
     findById(id: Domain.Identifier): Promise<Domain.Deck>
@@ -29,6 +31,18 @@ export class DeckRepositoryImpl implements DeckRepository {
             active: params.active,
             description: params.description
         })
+
+        return this.toDomainEntity(deck)
+    }
+
+    public async update(params: UpdateParams): Promise<Domain.Deck> {
+        const deck = await this.storage.getDecksCollection().findOneAndUpdate<Models.DeckDocument>({
+            _id: params.id
+        }, {
+            title: params?.title,
+            active: params?.active,
+            description: params?.description
+        }, { new: true })
 
         return this.toDomainEntity(deck)
     }
@@ -56,7 +70,7 @@ export class DeckRepositoryImpl implements DeckRepository {
 
         return decks.map(this.toDomainEntity.bind(this))
     }
-    
+
     private toDomainEntity(deck: Models.DeckDocument): Domain.Deck {
         if (!deck) return null
 
@@ -74,6 +88,13 @@ interface CreateParams {
     user_id: string
     title: string
     active: boolean
+    description?: string
+}
+
+interface UpdateParams {
+    id: Domain.Identifier
+    title?: string
+    active?: boolean
     description?: string
 }
 

@@ -1,27 +1,27 @@
 {
   "compilerOptions": {
-      "declaration": true,
-      "target": "es2016",
-      "module": "CommonJS",
-      "moduleResolution": "node",
-      "experimentalDecorators": true,
-      "esModuleInterop": true,
-      "lib": [
-          "es2017",
-          "esnext"
-      ],
-      "types": [
-          "node",
-      ],
-      "outDir": "./build",
-      "sourceMap": true,
-      "skipLibCheck": true
-  },
-  "include": [
-      "src/**/*.ts"
-  ],
-  "exclude": [
-      "node_modules",
-      "**/*.spec.ts"
-  ]
+    "module": "NodeNext",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2022",
+    "sourceMap": true,
+    "outDir": "./build",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "app/*": ["./src/*"],
+      "test/*": ["./test/*"]
+    },
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true
+  }
 }

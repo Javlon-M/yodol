@@ -1,6 +1,6 @@
 import { ContainerModule, interfaces } from "inversify"
 
-import * as Repositories from "../repositories"
+import * as Repositories from "app/repositories"
 
 import { RepositorySymbols } from "./dependency-symbols"
 
@@ -13,4 +13,8 @@ export const RepositoryContainerModule = new ContainerModule((bind: interfaces.B
     // Deck
     bind<Repositories.DeckRepository>(RepositorySymbols.DeckRepository)
     .to(Repositories.DeckRepositoryImpl).inSingletonScope()
+
+    //User
+    bind<Repositories.UserRepository>(RepositorySymbols.UserRepository)
+        .to(Repositories.UserRepositoryImpl).inSingletonScope()
 })

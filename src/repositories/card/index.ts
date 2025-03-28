@@ -1,25 +1,26 @@
 import * as Inversify from "inversify"
 
-import * as Domain from "../../domain"
-import * as Models from "../../components"
-import * as Factories from "../../factories"
-import * as Infrastructure from "../../infrastructure"
+import * as Domain from "app/domain"
+import * as Models from "app/components"
+import * as Factories from "app/factories"
+import * as Infrastructure from "app/infrastructure"
 
-import { FactorySymbols } from "../../factories/dependency-symbols"
-import { ComponentsSymbols } from "../../components/dependency-symbols"
+import { FactorySymbols } from "app/factories/dependency-symbols"
+import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface CardRepository {
     getCard: (params: GetParams) => Promise<Domain.Card[]>
     create(params: CreateParams): Promise<Domain.Card>
+    deleteById(id: Domain.Identifier): Promise<Domain.Card>
 }
 
 @Inversify.injectable()
 export class CardRepositoryImpl implements CardRepository {
     constructor(
         @Inversify.inject(FactorySymbols.CardFactory) private cardFactory: Factories.CardFactory,
-        @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage
-    ){}
+        @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
+    ) { }
 
     public async getCard(params: GetParams): Promise<Domain.Card[]> {
         const cards = await this.storage.getCardsCollection().find({ _id: params.deckId })
@@ -41,6 +42,14 @@ export class CardRepositoryImpl implements CardRepository {
         return this.toDomainEntity(card)
     }
 
+    public async deleteById(id: Domain.Identifier): Promise<Domain.Card> {
+        const card = await this.storage.getCardsCollection().findByIdAndDelete<Models.CardDocument>({
+            _id: id
+        })
+
+        return this.toDomainEntity(card)
+    }
+
     private toDomainEntity(card: Models.CardDocument): Domain.Card {
         if (!card) return null
 
@@ -56,7 +65,6 @@ export class CardRepositoryImpl implements CardRepository {
         })
     }
 }
-
 
 interface GetParams {
     deckId: string

@@ -1,4 +1,4 @@
-import * as Domain from "../../domain"
+import * as Domain from "app/domain"
 
 
 export class Card {

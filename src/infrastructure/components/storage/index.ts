@@ -1,5 +1,4 @@
-import * as Models from "../../../components/"
-
+import * as Models from "app/components"
 
 export interface Storage {
     open(): Promise<void>
@@ -9,4 +8,6 @@ export interface Storage {
     getCardsCollection(): typeof Models.CardModel
 
     getDecksCollection(): typeof Models.DeckModel
+
+    getUsersCollection(): typeof Models.UserModel
 }

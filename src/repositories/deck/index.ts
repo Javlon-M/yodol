@@ -11,7 +11,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 export interface DeckRepository {
     create(params: CreateParams): Promise<Domain.Deck>
-    update(params: UpdateParams): Promise<Domain.Deck>
+    update(params: EditParams): Promise<Domain.Deck>
     remove(params: RemoveParams): Promise<Domain.Deck>
     findByUserId(userId: Domain.Identifier): Promise<Domain.Deck[]>
     findById(id: Domain.Identifier): Promise<Domain.Deck>
@@ -35,14 +35,22 @@ export class DeckRepositoryImpl implements DeckRepository {
         return this.toDomainEntity(deck)
     }
 
-    public async update(params: UpdateParams): Promise<Domain.Deck> {
-        const deck = await this.storage.getDecksCollection().findOneAndUpdate<Models.DeckDocument>({
-            _id: params.id
-        }, {
-            title: params?.title,
-            active: params?.active,
-            description: params?.description
-        }, { new: true })
+    public async update(params: EditParams): Promise<Domain.Deck> {
+        const filter = { _id: params.id }
+
+        const updateDeck = {
+            $set: {
+                title: params?.title,
+                active: params?.active,
+                description: params?.description
+            }
+        }
+
+        const deck = await this.storage.getDecksCollection().findOneAndUpdate<Models.DeckDocument>(
+            filter,
+            updateDeck,
+            { new: true }
+        )
 
         return this.toDomainEntity(deck)
     }
@@ -91,11 +99,8 @@ interface CreateParams {
     description?: string
 }
 
-interface UpdateParams {
+interface EditParams extends Omit<Partial<CreateParams>, 'user_id'> {
     id: Domain.Identifier
-    title?: string
-    active?: boolean
-    description?: string
 }
 
 interface RemoveParams {

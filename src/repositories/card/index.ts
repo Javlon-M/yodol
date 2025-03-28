@@ -10,7 +10,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface CardRepository {
-    getCard: (params: GetParams) => Promise<Domain.Card[]>
+    get: (deckId: Domain.Identifier) => Promise<Domain.Card[]>
     create(params: CreateParams): Promise<Domain.Card>
     deleteById(id: Domain.Identifier): Promise<Domain.Card>
 }
@@ -20,12 +20,12 @@ export class CardRepositoryImpl implements CardRepository {
     constructor(
         @Inversify.inject(FactorySymbols.CardFactory) private cardFactory: Factories.CardFactory,
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
-    ) { }
+    ) {}
 
-    public async getCard(params: GetParams): Promise<Domain.Card[]> {
-        const cards = await this.storage.getCardsCollection().find({ _id: params.deckId })
+    public async get(deckId: Domain.Identifier): Promise<Domain.Card[]> {
+        const cards = await this.storage.getCardsCollection().find({ deck_id: deckId })
 
-        return cards.map(card => this.toDomainEntity(card));
+        return cards.map(this.toDomainEntity.bind(this));
     }
 
     public async create(params: CreateParams): Promise<Domain.Card> {
@@ -64,10 +64,6 @@ export class CardRepositoryImpl implements CardRepository {
             levelUpdatedAt: card.level_updated_at
         })
     }
-}
-
-interface GetParams {
-    deckId: string
 }
 
 interface CreateParams {

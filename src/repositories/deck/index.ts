@@ -11,6 +11,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 export interface DeckRepository {
     create(params: CreateParams): Promise<Domain.Deck>
     remove(params: RemoveParams): Promise<Domain.Deck>
+    findByUserId(userId: Domain.Identifier): Promise<Domain.Deck[]>
     findById(id: Domain.Identifier): Promise<Domain.Deck>
 }
 
@@ -33,7 +34,7 @@ export class DeckRepositoryImpl implements DeckRepository {
     }
 
     public async remove(params: RemoveParams): Promise<Domain.Deck> {
-        const deck = await this.storage.getDecksCollection().findOneAndDelete({
+        const deck = await this.storage.getDecksCollection().findOneAndDelete<Models.DeckDocument>({
             _id: params.id
         })
 
@@ -41,13 +42,21 @@ export class DeckRepositoryImpl implements DeckRepository {
     }
 
     public async findById(id: Domain.Identifier): Promise<Domain.Deck> {
-        const deck = await this.storage.getDecksCollection().findById({
+        const deck = await this.storage.getDecksCollection().findById<Models.DeckDocument>({
             _id: id.toStorageValue()
         })
 
         return this.toDomainEntity(deck)
     }
 
+    public async findByUserId(userId: Domain.Identifier): Promise<Domain.Deck[]> {
+        const decks = await this.storage.getDecksCollection().find<Models.DeckDocument>({
+            user_id: userId.toStorageValue()
+        })
+
+        return decks.map(this.toDomainEntity.bind(this))
+    }
+    
     private toDomainEntity(deck: Models.DeckDocument): Domain.Deck {
         if (!deck) return null
 

@@ -61,4 +61,8 @@ export class MongooseStorageImpl implements Infrastructure.Storage {
     public getDecksCollection(): typeof Models.DeckModel {
         return Models.DeckModel
     }
+
+    public getUsersCollection(): typeof Models.UserModel {
+        return Models.UserModel
+    }
 }

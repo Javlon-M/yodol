@@ -49,7 +49,7 @@ export class DeckRepositoryImpl implements DeckRepository {
         const deck = await this.storage.getDecksCollection().findOneAndUpdate<Models.DeckDocument>(
             filter,
             updateDeck,
-            { new: true }
+            { returnOriginal: false }
         )
 
         return this.toDomainEntity(deck)

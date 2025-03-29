@@ -29,4 +29,7 @@ export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind
 
     bind<Usecases.UpdateUserUseCase>(UseCaseSymbols.UpdateUserUseCase)
     .to(Usecases.UpdateUserUseCaseImpl).inSingletonScope()
+
+    bind<Usecases.GetOneUserUseCase>(UseCaseSymbols.GetOneUserUseCase)
+    .to(Usecases.GetOneUserUseCaseImpl).inSingletonScope()
 })

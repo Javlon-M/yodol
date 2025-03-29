@@ -14,7 +14,8 @@ export class AttendanceFactoryImpl implements AttendanceFactory {
             params.id,
             params.month,
             params.userId,
-            params.attended
+            params.attended,
+            params.createdAt
         )
     }
 }
@@ -24,4 +25,5 @@ interface Params {
     month: string
     userId: string
     attended: number[]
+    createdAt: number
 }

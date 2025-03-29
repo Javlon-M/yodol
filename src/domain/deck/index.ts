@@ -1,7 +1,7 @@
 export class Deck {
     constructor(
         private id: string,
-        private user_id: string,
+        private userId: string,
         private title: string,
         private active: boolean,
         private description?: string
@@ -12,7 +12,7 @@ export class Deck {
     }
 
     public getUserId(): string {
-        return this.user_id
+        return this.userId
     }
 
     public getTitle(): string {

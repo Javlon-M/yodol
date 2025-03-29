@@ -9,5 +9,6 @@ export const UseCaseSymbols = {
     DeleteCardUseCase: Symbol("DeleteCardUseCase"),
 
     // User
-    CreateUserUseCase: Symbol("CreateUserUseCase")
+    CreateUserUseCase: Symbol("CreateUserUseCase"),
+    UpdateUserUseCase: Symbol("UpdateUserUseCase")
 }

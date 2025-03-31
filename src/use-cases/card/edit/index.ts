@@ -1,8 +1,10 @@
 import * as Inversify from 'inversify';
 import * as Repositories from 'app/repositories';
 import * as Domain from 'app/domain';
+import * as Factories from "app/factories"
 
 import { RepositorySymbols } from 'app/repositories/dependency-symbols';
+import { FactorySymbols } from 'app/factories/dependency-symbols';
 
 
 export interface EditCardUseCase {
@@ -13,13 +15,19 @@ export interface EditCardUseCase {
 export class EditCardUseCaseImpl implements EditCardUseCase {
     constructor(
       @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository,
+      @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
       ) {}
 
     public async execute(params: EditParams): Promise<Domain.Card> {
-        const card = await this.cardRepository.update(params)
+        const card = await this.cardRepository.update({
+            ...params,
+            id: this.identifierFactory.construct(params.id)
+        })
+
         if (!card) {
             throw new Error("Card not found");
         }
+
         return card
     }
 }

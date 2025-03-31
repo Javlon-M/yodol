@@ -45,7 +45,7 @@ export class CardRepositoryImpl implements CardRepository {
     }
 
     public async update(params: EditParams): Promise<Domain.Card> {
-        const filter = { _id: params.id };
+        const filter = { _id: params.id.toStorageValue() };
 
         const updateCard = {
             $set: params
@@ -88,5 +88,5 @@ export interface CreateParams {
 }
 
 export interface EditParams extends Partial<CreateParams> {
-    id: string
+    id: Domain.Identifier
 }

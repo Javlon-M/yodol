@@ -16,12 +16,25 @@ export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind
     bind<Usecases.GetDecksUseCase>(UseCaseSymbols.GetDecksUseCase)
     .to(Usecases.GetDecksUseCaseImpl).inSingletonScope()
 
+    bind<Usecases.CreateDeckUseCase>(UseCaseSymbols.CreateDeckUseCase)
+    .to(Usecases.CreateDeckUseCaseImpl).inSingletonScope()
+
     // Card
     bind<Usecases.CreateCardUseCase>(UseCaseSymbols.CreateCardUseCase)
     .to(Usecases.CreateCardUseCaseImpl).inSingletonScope()
 
     bind<Usecases.DeleteCardUseCase>(UseCaseSymbols.DeleteCardUseCase)
     .to(Usecases.DeleteCardUseCaseImpl).inSingletonScope()
+
+    // User
+    bind<Usecases.CreateUserUseCase>(UseCaseSymbols.CreateUserUseCase)
+    .to(Usecases.CreateUserUseCaseImpl).inSingletonScope()
+
+    bind<Usecases.UpdateUserUseCase>(UseCaseSymbols.UpdateUserUseCase)
+    .to(Usecases.UpdateUserUseCaseImpl).inSingletonScope()
+
+    bind<Usecases.GetOneUserUseCase>(UseCaseSymbols.GetOneUserUseCase)
+    .to(Usecases.GetOneUserUseCaseImpl).inSingletonScope()
 
     bind<Usecases.EditCardUseCase>(UseCaseSymbols.EditCardUseCase)
     .to(Usecases.EditCardUseCaseImpl).inSingletonScope()

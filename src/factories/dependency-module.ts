@@ -17,9 +17,13 @@ export const FactoryContainerModule = new ContainerModule((bind: interfaces.Bind
 
     //User
     bind<UserFactory>(FactorySymbols.UserFactory)
-        .to(UserFactoryImpl).inSingletonScope()
+    .to(UserFactoryImpl).inSingletonScope()
 
     // Identifier
     bind<Factories.IdentifierFactory>(FactorySymbols.IdentifierFactory)
     .to(Factories.IdentifierFactoryImpl).inSingletonScope()
+
+    // Attendance
+    bind<Factories.AttendanceFactory>(FactorySymbols.AttendanceFactory)
+    .to(Factories.AttendanceFactoryImpl).inSingletonScope()
 })

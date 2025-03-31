@@ -12,6 +12,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 export interface UserRepository {
     create(params: CreateParams): Promise<Domain.User>
     remove(params: RemoveParams): Promise<Domain.User>
+    update(params: UpdateParams): Promise<Domain.User>
     findById(id: Domain.Identifier): Promise<Domain.User>
 }
 
@@ -40,6 +41,22 @@ export class UserRepositoryImpl implements UserRepository {
         return await this.storage.getUsersCollection().findOneAndDelete({
             _id: params.id
         })
+    }
+
+    public async update(params: UpdateParams): Promise<Domain.User> {
+        const user = await this.storage.getUsersCollection().findOneAndUpdate<Models.UserDocument>(
+            {
+                _id: params.id.toStorageValue()
+            }, 
+            {
+                $set: params
+            }, 
+            {
+                returnOriginal: false 
+            }
+        )
+
+        return this.toDomainEntity(user)
     }
 
     public async findById(id: Domain.Identifier): Promise<Domain.User> {
@@ -76,4 +93,8 @@ interface CreateParams {
 
 interface RemoveParams {
     id: string
+}
+
+interface UpdateParams extends Partial<CreateParams> {
+    id: Domain.Identifier
 }

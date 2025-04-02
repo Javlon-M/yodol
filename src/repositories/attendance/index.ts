@@ -57,7 +57,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             userId: attendance.user_id,
             month: attendance.month,
             attended: attendance.attended,
-            createdAt: attendance.created_at
+            createdAt: attendance.created_at,
+            lastSubmitDay: attendance.last_submit_day
         })
     }
 }

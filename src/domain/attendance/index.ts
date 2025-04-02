@@ -8,6 +8,7 @@ export class Attendance {
         private userId: string,
         private attended: number[],
         private createdAt: number,
+        private lastSubmitDay: number
     ){}
 
     public getId(): Domain.Identifier {
@@ -24,6 +25,10 @@ export class Attendance {
 
     public getCreatedAt(): number {
         return this.createdAt
+    }
+
+    public getLastSubmitDay(): number {
+        return this.lastSubmitDay
     }
     
     public getAttended(): number[] {

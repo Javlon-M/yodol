@@ -23,7 +23,7 @@ const AttendanceSchema = new Schema<AttendanceDocument>(
             type: [Number],
             required: true
         },
-        created_at: {
+        created_at_month: {
             type: Number,
             required: true
         },

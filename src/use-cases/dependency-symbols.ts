@@ -8,8 +8,10 @@ export const UseCaseSymbols = {
     // Card
     CreateCardUseCase: Symbol("CreateCardUseCase"),
     DeleteCardUseCase: Symbol("DeleteCardUseCase"),
+    EditCardUseCase: Symbol("EditCardUseCase"),
 
     // User
     CreateUserUseCase: Symbol("CreateUserUseCase"),
     UpdateUserUseCase: Symbol("UpdateUserUseCase"),
+    GetOneUserUseCase: Symbol("GetOneUserUseCase"),
 }

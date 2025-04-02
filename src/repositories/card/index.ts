@@ -12,6 +12,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 export interface CardRepository {
     create(params: CreateParams): Promise<Domain.Card>
     deleteById(id: Domain.Identifier): Promise<Domain.Card>
+    update(params: EditParams): Promise<Domain.Card>
 }
 
 @Inversify.injectable()
@@ -43,6 +44,22 @@ export class CardRepositoryImpl implements CardRepository {
         return this.toDomainEntity(card)
     }
 
+    public async update(params: EditParams): Promise<Domain.Card> {
+        const filter = { _id: params.id.toStorageValue() };
+
+        const updateCard = {
+            $set: params
+        };
+
+        const card = await this.storage.getCardsCollection().findOneAndUpdate(
+            filter,
+            updateCard,
+            { returnOriginal: false }
+        )
+
+        return this.toDomainEntity(card)
+    }
+
     private toDomainEntity(card: Models.CardDocument): Domain.Card {
         if (!card) return null
 
@@ -59,6 +76,7 @@ export class CardRepositoryImpl implements CardRepository {
     }
 }
 
+
 interface CreateParams {
     deckId: string
     front: string
@@ -67,4 +85,8 @@ interface CreateParams {
     schedulePeriod: number
     createAt: number
     levelUpdatedAt: number
+}
+
+interface EditParams extends Partial<CreateParams> {
+    id: Domain.Identifier
 }

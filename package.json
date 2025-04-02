@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "node build/index.js"
+    "build": "tsc && tsc-alias",
+    "start": "node --env-file=.env ./build/applications/index.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "dependencies": {
     "inversify": "^6.1.0",
     "mongoose": "^8.12.1",
+    "tsc-alias": "^1.8.13",
     "typescript": "^5.8.2"
   },
   "devDependencies": {

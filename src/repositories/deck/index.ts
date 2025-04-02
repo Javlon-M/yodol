@@ -99,7 +99,7 @@ interface CreateParams {
     description?: string
 }
 
-interface EditParams extends Omit<Partial<CreateParams>, 'user_id'> {
+interface EditParams extends Partial<CreateParams> {
     id: Domain.Identifier
 }
 

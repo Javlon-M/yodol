@@ -5,7 +5,8 @@ export interface AttendanceDocument extends Document {
     user_id: string
     month: string
     attended: number[]
-    created_at: number
+    created_at_month: number
+    last_submit_day: number
 }
 
 const AttendanceSchema = new Schema<AttendanceDocument>(
@@ -23,6 +24,10 @@ const AttendanceSchema = new Schema<AttendanceDocument>(
             required: true
         },
         created_at: {
+            type: Number,
+            required: true
+        },
+        last_submit_day: {
             type: Number,
             required: true
         }

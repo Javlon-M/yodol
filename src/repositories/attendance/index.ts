@@ -10,7 +10,8 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface AttendanceRepository {
-    create(params: CreateParams): Promise<Domain.Attendance>
+    upsert(params: CreateParams): Promise<Domain.Attendance>
+    findOne(filter: FindOneParams): Promise<Domain.Attendance>
 }
 
 @Inversify.injectable()
@@ -20,13 +21,30 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
     ) { }
 
-    public async create(params: CreateParams): Promise<Domain.Attendance> {
-        const attendance = await this.storage.getAttendancesCollection().insertOne({
+    public async upsert(params: CreateParams): Promise<Domain.Attendance> {
+        const filter = {
+            user_id: params.userId,
+            created_at_month: params.createdAtMonth,
+            month: params.month
+        }
+
+        const upsertParams = {
             user_id: params.userId,
             month: params.month,
             attended: params.attended,
-            createdAt: params.createdAt,
-        })
+            created_at_month: params.createdAtMonth,
+            last_submit_day: params.lastSubmitDay
+        }
+
+        const options = { upsert: true }
+
+        const attendance = await this.storage.getAttendancesCollection().findOneAndUpdate(filter, upsertParams, options)
+
+        return this.toDomainEntity(attendance)
+    }
+
+    public async findOne(filter: FindOneParams): Promise<Domain.Attendance> {
+        const attendance = await this.storage.getAttendancesCollection().findOne<Models.AttendanceDocument>(filter)
 
         return this.toDomainEntity(attendance)
     }
@@ -39,7 +57,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             userId: attendance.user_id,
             month: attendance.month,
             attended: attendance.attended,
-            createdAt: attendance.created_at
+            createdAtMonth: attendance.created_at_month,
+            lastSubmitDay: attendance.last_submit_day
         })
     }
 }
@@ -48,5 +67,12 @@ interface CreateParams {
     userId: string
     month: string
     attended: number[]
-    createdAt: number
+    createdAtMonth: number
+    lastSubmitDay: number
+}
+
+interface FindOneParams {
+    userId: string
+    month: string
+    createdAtMonth: number
 }

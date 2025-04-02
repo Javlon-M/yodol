@@ -11,6 +11,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 export interface AttendanceRepository {
     upsert(params: CreateParams): Promise<Domain.Attendance>
+    findOne(filter: FindOneParams): Promise<Domain.Attendance>
 }
 
 @Inversify.injectable()
@@ -42,6 +43,12 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         return this.toDomainEntity(attendance)
     }
 
+    public async findOne(filter: FindOneParams): Promise<Domain.Attendance> {
+        const attendance = await this.storage.getAttendancesCollection().findOne<Models.AttendanceDocument>(filter)
+
+        return this.toDomainEntity(attendance)
+    }
+
     private toDomainEntity(attendance: Models.AttendanceDocument): Domain.Attendance {
         if (!attendance) return null
 
@@ -61,4 +68,10 @@ interface CreateParams {
     attended: number[]
     createdAt: number
     lastSubmitDay: number
+}
+
+interface FindOneParams {
+    userId: string
+    month: string
+    createdAt: number
 }

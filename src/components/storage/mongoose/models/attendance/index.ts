@@ -5,7 +5,7 @@ export interface AttendanceDocument extends Document {
     user_id: string
     month: string
     attended: number[]
-    created_at: number
+    created_at_month: number
     last_submit_day: number
 }
 

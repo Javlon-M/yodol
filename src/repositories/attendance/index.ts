@@ -24,7 +24,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     public async upsert(params: CreateParams): Promise<Domain.Attendance> {
         const filter = {
             user_id: params.userId,
-            created_at: params.createdAt,
+            created_at_month: params.createdAtMonth,
             month: params.month
         }
 
@@ -32,7 +32,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             user_id: params.userId,
             month: params.month,
             attended: params.attended,
-            created_at: params.createdAt,
+            created_at_month: params.createdAtMonth,
             last_submit_day: params.lastSubmitDay
         }
 
@@ -57,7 +57,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             userId: attendance.user_id,
             month: attendance.month,
             attended: attendance.attended,
-            createdAt: attendance.created_at,
+            createdAtMonth: attendance.created_at_month,
             lastSubmitDay: attendance.last_submit_day
         })
     }
@@ -67,12 +67,12 @@ interface CreateParams {
     userId: string
     month: string
     attended: number[]
-    createdAt: number
+    createdAtMonth: number
     lastSubmitDay: number
 }
 
 interface FindOneParams {
     userId: string
     month: string
-    createdAt: number
+    createdAtMonth: number
 }

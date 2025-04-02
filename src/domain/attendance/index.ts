@@ -7,7 +7,7 @@ export class Attendance {
         private month: string,
         private userId: string,
         private attended: number[],
-        private createdAt: number,
+        private createdAtMonth: number,
         private lastSubmitDay: number
     ){}
 
@@ -23,8 +23,8 @@ export class Attendance {
         return this.month
     }
 
-    public getCreatedAt(): number {
-        return this.createdAt
+    public getCreatedAtMonth(): number {
+        return this.createdAtMonth
     }
 
     public getLastSubmitDay(): number {

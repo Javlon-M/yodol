@@ -1,4 +1,5 @@
 import * as Inversify from 'inversify';
+
 import * as Repositories from 'app/repositories';
 import * as Domain from 'app/domain';
 import * as Factories from "app/factories"

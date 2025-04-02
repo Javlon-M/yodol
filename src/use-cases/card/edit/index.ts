@@ -32,7 +32,7 @@ export class EditCardUseCaseImpl implements EditCardUseCase {
     }
 }
 
-export interface EditParams {
+interface EditParams {
     id: string
     deckId?: string
     front?: string

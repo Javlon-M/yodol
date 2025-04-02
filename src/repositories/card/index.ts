@@ -77,7 +77,7 @@ export class CardRepositoryImpl implements CardRepository {
 }
 
 
-export interface CreateParams {
+interface CreateParams {
     deckId: string
     front: string
     back: string
@@ -87,6 +87,6 @@ export interface CreateParams {
     levelUpdatedAt: number
 }
 
-export interface EditParams extends Partial<CreateParams> {
+interface EditParams extends Partial<CreateParams> {
     id: Domain.Identifier
 }

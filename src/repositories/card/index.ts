@@ -10,7 +10,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface CardRepository {
-    get: (deckId: Domain.Identifier) => Promise<Domain.Card[]>
+    get(deckId: Domain.Identifier): Promise<Domain.Card[]>
     create(params: CreateParams): Promise<Domain.Card>
     deleteById(id: Domain.Identifier): Promise<Domain.Card>
     update(params: EditParams): Promise<Domain.Card>

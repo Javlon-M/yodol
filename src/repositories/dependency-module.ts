@@ -14,7 +14,11 @@ export const RepositoryContainerModule = new ContainerModule((bind: interfaces.B
     bind<Repositories.DeckRepository>(RepositorySymbols.DeckRepository)
     .to(Repositories.DeckRepositoryImpl).inSingletonScope()
 
-    //User
+    // User
     bind<Repositories.UserRepository>(RepositorySymbols.UserRepository)
-        .to(Repositories.UserRepositoryImpl).inSingletonScope()
+    .to(Repositories.UserRepositoryImpl).inSingletonScope()
+    
+    // Attendance
+    bind<Repositories.AttendanceRepository>(RepositorySymbols.AttendanceRepository)
+    .to(Repositories.AttendanceRepositoryImpl).inSingletonScope()
 })

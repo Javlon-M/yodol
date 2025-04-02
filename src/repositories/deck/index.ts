@@ -8,6 +8,7 @@ import * as Infrastructure from "app/infrastructure"
 import { FactorySymbols } from "app/factories/dependency-symbols"
 import { ComponentsSymbols } from "app/components/dependency-symbols"
 
+
 export interface DeckRepository {
     create(params: CreateParams): Promise<Domain.Deck>
     remove(params: RemoveParams): Promise<Domain.Deck>
@@ -24,7 +25,7 @@ export class DeckRepositoryImpl implements DeckRepository {
 
     public async create(params: CreateParams): Promise<Domain.Deck> {
         const deck = await this.storage.getDecksCollection().insertOne({
-            user_id: params.user_id,
+            user_id: params.userId,
             title: params.title,
             active: params.active,
             description: params.description
@@ -62,7 +63,7 @@ export class DeckRepositoryImpl implements DeckRepository {
 
         return this.deckFactory.construct({
             id: deck.id,
-            user_id: deck.user_id,
+            userId: deck.user_id,
             title: deck.title,
             active: deck.active,
             description: deck.description
@@ -71,7 +72,7 @@ export class DeckRepositoryImpl implements DeckRepository {
 }
 
 interface CreateParams {
-    user_id: string
+    userId: string
     title: string
     active: boolean
     description?: string

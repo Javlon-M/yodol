@@ -10,4 +10,6 @@ export interface Storage {
     getDecksCollection(): typeof Models.DeckModel
 
     getUsersCollection(): typeof Models.UserModel
+
+    getAttendancesCollection(): typeof Models.AttendanceModel
 }

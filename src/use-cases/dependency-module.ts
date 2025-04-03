@@ -35,4 +35,8 @@ export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind
 
     bind<Usecases.GetOneUserUseCase>(UseCaseSymbols.GetOneUserUseCase)
     .to(Usecases.GetOneUserUseCaseImpl).inSingletonScope()
+
+    // Attendance 
+    bind<Usecases.MarkUserSubmissionUseCase>(UseCaseSymbols.MarkUserSubmissionUseCase)
+    .to(Usecases.MarkUserSubmissionUseCaseImpl).inSingletonScope()
 })

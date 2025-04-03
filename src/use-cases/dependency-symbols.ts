@@ -14,4 +14,7 @@ export const UseCaseSymbols = {
     CreateUserUseCase: Symbol("CreateUserUseCase"),
     UpdateUserUseCase: Symbol("UpdateUserUseCase"),
     GetOneUserUseCase: Symbol("GetOneUserUseCase"),
+
+    // Attendance
+    MarkUserSubmissionUseCase: Symbol("MarkUserSubmissionUseCase")
 }

@@ -11,6 +11,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 export interface AttendanceRepository {
     upsert(params: CreateParams): Promise<Domain.Attendance>
+    markSubmit(params: MarkSubmitParams): Promise<Domain.Attendance>
     findOne(filter: FindOneParams): Promise<Domain.Attendance>
 }
 
@@ -43,6 +44,17 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         return this.toDomainEntity(attendance)
     }
 
+    public async markSubmit(params: MarkSubmitParams): Promise<Domain.Attendance> {
+        const attendance = await this.storage.getAttendancesCollection().findByIdAndUpdate<Models.AttendanceDocument>({
+            _id: params.id.toStorageValue()
+        }, {
+            attended: params.attended,
+            last_submit_day: params.lastSubmitDay
+        })
+
+        return this.toDomainEntity(attendance)
+    }
+
     public async findOne(filter: FindOneParams): Promise<Domain.Attendance> {
         const attendance = await this.storage.getAttendancesCollection().findOne<Models.AttendanceDocument>(filter)
 
@@ -68,6 +80,12 @@ interface CreateParams {
     month: string
     attended: number[]
     createdAtMonth: number
+    lastSubmitDay: number
+}
+
+interface MarkSubmitParams {
+    id: Domain.Identifier
+    attended: number[]
     lastSubmitDay: number
 }
 

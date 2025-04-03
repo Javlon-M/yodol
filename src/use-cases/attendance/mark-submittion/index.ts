@@ -7,7 +7,7 @@ import { RepositorySymbols } from "app/repositories/dependency-symbols"
 
 
 export interface MarkUserSubmissionUseCase {
-    execute(params: Params): Promise<Response>
+    execute(params: Params): Promise<Domain.Attendance>
 }
 
 @Inversify.injectable()
@@ -16,7 +16,7 @@ export class MarkUserSubmissionUseCaseImpl implements MarkUserSubmissionUseCase 
         @Inversify.inject(RepositorySymbols.AttendanceRepository) private attendanceRepository: Repositories.AttendanceRepository
     ){}
     
-    public async execute(params: Params): Promise<Response> {
+    public async execute(params: Params): Promise<Domain.Attendance> {
         const today = this.getToday()
 
         const attendance = await this.attendanceRepository.findOne({
@@ -72,10 +72,6 @@ export class MarkUserSubmissionUseCaseImpl implements MarkUserSubmissionUseCase 
 
 interface Params {
     userId: Domain.Identifier
-}
-
-interface Response {
-
 }
 
 interface Today {

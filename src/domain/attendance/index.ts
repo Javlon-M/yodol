@@ -7,6 +7,7 @@ export class Attendance {
         private month: string,
         private userId: string,
         private attended: number[],
+        private deckId: string,
         private createdAtMonth: number,
         private lastSubmitDay: number
     ){}
@@ -17,6 +18,10 @@ export class Attendance {
 
     public getUserId(): string {
         return this.userId
+    }
+
+    public getDeckId(): string {
+        return this.deckId
     }
     
     public getMonth(): string {

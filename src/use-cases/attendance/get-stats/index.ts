@@ -13,11 +13,22 @@ export interface GetUserStatsUseCase {
 @Inversify.injectable()
 export class GetUserStatsUseCaseImpl implements GetUserStatsUseCase {
     constructor(
-        @Inversify.inject(RepositorySymbols.AttendanceRepository) private attendanceRepository: Repositories.AttendanceRepository
+        @Inversify.inject(RepositorySymbols.AttendanceRepository) private attendanceRepository: Repositories.AttendanceRepository,
+        @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository
     ){}
 
     public async execute(params: Params): Promise<Response> {
-        return await this.getCalendar(params)
+        const attendances = await this.getCalendar(params)
+        const cards = await this.getCards(params.deckId)
+        
+        return {
+            cards,
+            attendances
+        }
+    }
+
+    private async getCards(deckId: string): Promise<Domain.Card[]> {
+        return await this.cardRepository.findByDeckId(deckId)
     }
 
     private async getCalendar(params: Params): Promise<Domain.Attendance[]> {
@@ -46,5 +57,6 @@ interface Params {
 }
 
 interface Response {
-
+    cards: Domain.Card[]
+    attendances: Domain.Attendance[]
 }

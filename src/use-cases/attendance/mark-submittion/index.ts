@@ -20,7 +20,7 @@ export class MarkUserSubmissionUseCaseImpl implements MarkUserSubmissionUseCase 
         const today = this.getToday()
 
         const attendance = await this.attendanceRepository.findOne({
-            userId: params.userId.toString(),
+            userId: params.userId,
             month: today.monthName,
             createdAtMonth: today.month 
         })
@@ -71,7 +71,7 @@ export class MarkUserSubmissionUseCaseImpl implements MarkUserSubmissionUseCase 
 }
 
 interface Params {
-    userId: Domain.Identifier
+    userId: string
 }
 
 interface Today {

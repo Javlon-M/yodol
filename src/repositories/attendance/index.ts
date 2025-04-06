@@ -13,6 +13,7 @@ export interface AttendanceRepository {
     upsert(params: CreateParams): Promise<Domain.Attendance>
     markSubmit(params: MarkSubmitParams): Promise<Domain.Attendance>
     findOne(filter: FindOneParams): Promise<Domain.Attendance>
+    findByUserIdAndDeckId(userId: string, deckId: string, options: Options): Promise<Domain.Attendance[]>
 }
 
 @Inversify.injectable()
@@ -61,6 +62,15 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         return this.toDomainEntity(attendance)
     }
 
+    public async findByUserIdAndDeckId(userId: string, deckId: string, options: Options): Promise<Domain.Attendance[]> {
+        const attendances = await this.storage.getAttendancesCollection().find<Models.AttendanceDocument>({
+            user_id: userId,
+            deck_id: deckId
+        }, options)
+
+        return attendances.map(this.toDomainEntity.bind(this))
+    }
+
     private toDomainEntity(attendance: Models.AttendanceDocument): Domain.Attendance {
         if (!attendance) return null
 
@@ -70,7 +80,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             month: attendance.month,
             attended: attendance.attended,
             createdAtMonth: attendance.created_at_month,
-            lastSubmitDay: attendance.last_submit_day
+            lastSubmitDay: attendance.last_submit_day,
+            deckId: attendance.deck_id
         })
     }
 }
@@ -93,4 +104,10 @@ interface FindOneParams {
     userId: string
     month: string
     createdAtMonth: number
+}
+
+interface Options {
+    limit: number, 
+    sort: number, 
+    skip: number
 }

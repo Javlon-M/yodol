@@ -44,7 +44,7 @@ export class GetUserStatsUseCaseImpl implements GetUserStatsUseCase {
 
         if (params.sort) options.sort = params.sort
 
-        return await this.attendanceRepository.findByUserIdAndDeckId(params.userId, params.deckId, options)
+        return await this.attendanceRepository.findByUserId(params.userId, options)
     }
 }
 

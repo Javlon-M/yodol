@@ -15,7 +15,6 @@ export class AttendanceFactoryImpl implements AttendanceFactory {
             params.month,
             params.userId,
             params.attended,
-            params.deckId,
             params.createdAtMonth,
             params.lastSubmitDay
         )
@@ -26,7 +25,6 @@ interface Params {
     id: Domain.Identifier
     month: string
     userId: string
-    deckId: string
     attended: number[]
     createdAtMonth: number
     lastSubmitDay: number

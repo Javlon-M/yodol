@@ -16,5 +16,6 @@ export const UseCaseSymbols = {
     GetOneUserUseCase: Symbol("GetOneUserUseCase"),
 
     // Attendance
-    MarkUserSubmissionUseCase: Symbol("MarkUserSubmissionUseCase")
+    MarkUserSubmissionUseCase: Symbol("MarkUserSubmissionUseCase"),
+    GetUserStatsUseCase: Symbol("GetUserStatsUseCase")
 }

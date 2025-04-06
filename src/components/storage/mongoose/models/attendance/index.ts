@@ -7,16 +7,11 @@ export interface AttendanceDocument extends Document {
     attended: number[]
     created_at_month: number
     last_submit_day: number
-    deck_id: string
 }
 
 const AttendanceSchema = new Schema<AttendanceDocument>(
     {
         user_id: {
-            type: String,
-            required: true
-        },
-        deck_id: {
             type: String,
             required: true
         },

@@ -7,7 +7,7 @@ services:
     depends_on:
       - mongo
     environment:
-      MONGO_URI: "mongodb://mongo:27017/mydatabase"
+      MONGO_URI: "mongodb://mongo:27017/yodol"
     volumes:
       - .:/app
     restart: always
@@ -15,9 +15,13 @@ services:
   mongo:
     image: mongo:latest
     container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
     ports:
       - "27017:27017"
     volumes:
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongo-data:/data/db
     restart: always
 

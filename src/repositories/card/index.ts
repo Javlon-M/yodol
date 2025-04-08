@@ -25,7 +25,7 @@ export class CardRepositoryImpl implements CardRepository {
     ) {}
 
     public async get(deckId: Domain.Identifier): Promise<Domain.Card[]> {
-        const cards = await this.storage.getCardsCollection().find({ deck_id: deckId })
+        const cards = await this.storage.getCardsCollection().find({ deck_id: deckId.toStorageValue() })
 
         return cards.map(this.toDomainEntity.bind(this));
     }

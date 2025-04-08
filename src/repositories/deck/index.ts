@@ -36,7 +36,7 @@ export class DeckRepositoryImpl implements DeckRepository {
     }
 
     public async update(params: EditParams): Promise<Domain.Deck> {
-        const filter = { _id: params.id }
+        const filter = { _id: params.id.toStorageValue() }
 
         const updateDeck = {
             $set: {
@@ -57,7 +57,7 @@ export class DeckRepositoryImpl implements DeckRepository {
 
     public async remove(params: RemoveParams): Promise<Domain.Deck> {
         const deck = await this.storage.getDecksCollection().findOneAndDelete<Models.DeckDocument>({
-            _id: params.id
+            _id: params.id.toStorageValue()
         })
 
         return this.toDomainEntity(deck)
@@ -104,5 +104,5 @@ interface EditParams extends Partial<CreateParams> {
 }
 
 interface RemoveParams {
-    id: string
+    id: Domain.Identifier
 }

@@ -11,6 +11,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 export interface DeckRepository {
     create(params: CreateParams): Promise<Domain.Deck>
+    update(params: EditParams): Promise<Domain.Deck>
     remove(params: RemoveParams): Promise<Domain.Deck>
     findByUserId(userId: Domain.Identifier): Promise<Domain.Deck[]>
     findById(id: Domain.Identifier): Promise<Domain.Deck>
@@ -34,9 +35,25 @@ export class DeckRepositoryImpl implements DeckRepository {
         return this.toDomainEntity(deck)
     }
 
+    public async update(params: EditParams): Promise<Domain.Deck> {
+        const filter = { _id: params.id.toStorageValue() }
+
+        const updateDeck = {
+            $set: params
+        }
+
+        const deck = await this.storage.getDecksCollection().findOneAndUpdate<Models.DeckDocument>(
+            filter,
+            updateDeck,
+            { returnOriginal: false }
+        )
+
+        return this.toDomainEntity(deck)
+    }
+
     public async remove(params: RemoveParams): Promise<Domain.Deck> {
         const deck = await this.storage.getDecksCollection().findOneAndDelete<Models.DeckDocument>({
-            _id: params.id
+            _id: params.id.toStorageValue()
         })
 
         return this.toDomainEntity(deck)
@@ -57,7 +74,7 @@ export class DeckRepositoryImpl implements DeckRepository {
 
         return decks.map(this.toDomainEntity.bind(this))
     }
-    
+
     private toDomainEntity(deck: Models.DeckDocument): Domain.Deck {
         if (!deck) return null
 
@@ -78,6 +95,10 @@ interface CreateParams {
     description?: string
 }
 
+interface EditParams extends Partial<CreateParams> {
+    id: Domain.Identifier
+}
+
 interface RemoveParams {
-    id: string
+    id: Domain.Identifier
 }

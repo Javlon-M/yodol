@@ -14,6 +14,7 @@ export interface CardRepository {
     create(params: CreateParams): Promise<Domain.Card>
     deleteById(id: Domain.Identifier): Promise<Domain.Card>
     update(params: EditParams): Promise<Domain.Card>
+    findByDeckId(deckId: string): Promise<Domain.Card[]>
 }
 
 @Inversify.injectable()
@@ -67,6 +68,14 @@ export class CardRepositoryImpl implements CardRepository {
         return this.toDomainEntity(card)
     }
 
+    public async findByDeckId(deckId: string): Promise<Domain.Card[]> {
+        const cards = await this.storage.getCardsCollection().find<Models.CardDocument>({
+            deck_id: deckId
+        })
+
+        return cards.map(this.toDomainEntity.bind(this))
+    }
+
     private toDomainEntity(card: Models.CardDocument): Domain.Card {
         if (!card) return null
 
@@ -82,7 +91,6 @@ export class CardRepositoryImpl implements CardRepository {
         })
     }
 }
-
 
 interface CreateParams {
     deckId: string

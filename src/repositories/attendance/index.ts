@@ -11,7 +11,9 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 export interface AttendanceRepository {
     upsert(params: CreateParams): Promise<Domain.Attendance>
+    markSubmit(params: MarkSubmitParams): Promise<Domain.Attendance>
     findOne(filter: FindOneParams): Promise<Domain.Attendance>
+    findByUserId(userId: string, options: Options): Promise<Domain.Attendance[]>
 }
 
 @Inversify.injectable()
@@ -43,10 +45,29 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         return this.toDomainEntity(attendance)
     }
 
+    public async markSubmit(params: MarkSubmitParams): Promise<Domain.Attendance> {
+        const attendance = await this.storage.getAttendancesCollection().findByIdAndUpdate<Models.AttendanceDocument>({
+            _id: params.id.toStorageValue()
+        }, {
+            attended: params.attended,
+            last_submit_day: params.lastSubmitDay
+        })
+
+        return this.toDomainEntity(attendance)
+    }
+
     public async findOne(filter: FindOneParams): Promise<Domain.Attendance> {
         const attendance = await this.storage.getAttendancesCollection().findOne<Models.AttendanceDocument>(filter)
 
         return this.toDomainEntity(attendance)
+    }
+
+    public async findByUserId(userId: string, options: Options): Promise<Domain.Attendance[]> {
+        const attendances = await this.storage.getAttendancesCollection().find<Models.AttendanceDocument>({
+            user_id: userId,
+        }, options)
+
+        return attendances.map(this.toDomainEntity.bind(this))
     }
 
     private toDomainEntity(attendance: Models.AttendanceDocument): Domain.Attendance {
@@ -58,7 +79,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             month: attendance.month,
             attended: attendance.attended,
             createdAtMonth: attendance.created_at_month,
-            lastSubmitDay: attendance.last_submit_day
+            lastSubmitDay: attendance.last_submit_day,
         })
     }
 }
@@ -71,8 +92,20 @@ interface CreateParams {
     lastSubmitDay: number
 }
 
+interface MarkSubmitParams {
+    id: Domain.Identifier
+    attended: number[]
+    lastSubmitDay: number
+}
+
 interface FindOneParams {
     userId: string
     month: string
     createdAtMonth: number
+}
+
+interface Options {
+    limit: number, 
+    sort: number, 
+    skip: number
 }

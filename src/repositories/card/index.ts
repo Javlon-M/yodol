@@ -46,7 +46,7 @@ export class CardRepositoryImpl implements CardRepository {
 
     public async deleteById(id: Domain.Identifier): Promise<Domain.Card> {
         const card = await this.storage.getCardsCollection().findByIdAndDelete<Models.CardDocument>({
-            _id: id
+            _id: id.toStorageValue()
         })  
 
         return this.toDomainEntity(card)

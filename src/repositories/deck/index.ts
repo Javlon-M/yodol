@@ -39,11 +39,7 @@ export class DeckRepositoryImpl implements DeckRepository {
         const filter = { _id: params.id.toStorageValue() }
 
         const updateDeck = {
-            $set: {
-                title: params?.title,
-                active: params?.active,
-                description: params?.description
-            }
+            $set: params
         }
 
         const deck = await this.storage.getDecksCollection().findOneAndUpdate<Models.DeckDocument>(

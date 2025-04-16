@@ -5,6 +5,26 @@ export interface DeckDocument extends Document {
     title: string
     active: boolean
     description?: string
+    configurations: {
+        new: {
+            delay: []
+            ints: []
+            initialFactor: number
+            perDay: number
+        },
+        rev: {
+            perDay: number
+            ease4: number
+            maxIvl: number
+            hardFactor: number
+        },
+        lapse: {
+            delays: []
+            mult: number
+            minInt: number
+            leechFails: number
+        }
+    }
 }
 
 const DeckSchema = new Schema<DeckDocument>(
@@ -24,6 +44,65 @@ const DeckSchema = new Schema<DeckDocument>(
         description: {
             type: String,
             required: false
+        },
+        configurations: {
+            type: {
+                new: {
+                    delay: {
+                        type: Array,
+                        required: true
+                    },
+                    ints: {
+                        type: Array,
+                        required: true
+                    },
+                    initialFactor: {
+                        type: Number,
+                        required: true
+                    },
+                    perDay: {
+                        type: Number,
+                        required: true
+                    }
+                },
+                rev: {
+                    perDay: {
+                        type: Number,
+                        required: true
+                    },
+                    ease4: {
+                        type: Number,
+                        required: true
+                    },
+                    maxIvl: {
+                        type: Number,
+                        required: true
+                    },
+                    hardFactor: {
+                        type: Number,
+                        required: true
+                    }
+                },
+                lapse: {
+                    delays: {
+                        type: Array,
+                        required: true
+                    },
+                    mult: {
+                        type: Number,
+                        required: true
+                    },
+                    minInt: {
+                        type: Number,
+                        required: true
+                    },
+                    leechFails: {
+                        type: Number,
+                        required: true
+                    }
+                }
+            },
+            required: true
         }
     }
 )

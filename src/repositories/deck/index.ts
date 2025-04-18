@@ -29,7 +29,12 @@ export class DeckRepositoryImpl implements DeckRepository {
             user_id: params.userId,
             title: params.title,
             active: params.active,
-            description: params.description
+            description: params.description,
+            configurations: {
+                new: params.configurations.new,
+                rev: params.configurations.rev,
+                lapse: params.configurations.lapse
+            }
         })
 
         return this.toDomainEntity(deck)
@@ -83,7 +88,8 @@ export class DeckRepositoryImpl implements DeckRepository {
             userId: deck.user_id,
             title: deck.title,
             active: deck.active,
-            description: deck.description
+            description: deck.description,
+            configurations: deck.configurations
         })
     }
 }
@@ -93,6 +99,26 @@ interface CreateParams {
     title: string
     active: boolean
     description?: string
+    configurations: {
+        new: {
+            delay: []
+            ints: []
+            initialFactor: number
+            perDay: number
+        },
+        rev: {
+            perDay: number
+            ease4: number
+            maxIvl: number
+            hardFactor: number
+        },
+        lapse: {
+            delays: []
+            mult: number
+            minInt: number
+            leechFails: number
+        }
+    }
 }
 
 interface EditParams extends Partial<CreateParams> {

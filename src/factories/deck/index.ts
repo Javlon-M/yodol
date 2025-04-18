@@ -14,6 +14,7 @@ export class DeckFactoryImpl implements DeckFactory {
             params.userId,
             params.title,
             params.active,
+            params.configurations,
             params.description
         )
     }
@@ -25,4 +26,24 @@ export interface Params {
     title: string
     active: boolean
     description?: string
+    configurations: {
+        new: {
+            delay: []
+            ints: []
+            initialFactor: number
+            perDay: number
+        },
+        rev: {
+            perDay: number
+            ease4: number
+            maxIvl: number
+            hardFactor: number
+        },
+        lapse: {
+            delays: []
+            mult: number
+            minInt: number
+            leechFails: number
+        }
+    }
 }

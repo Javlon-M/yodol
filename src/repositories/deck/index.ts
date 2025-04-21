@@ -101,8 +101,8 @@ interface CreateParams {
     description?: string
     configurations: {
         new: {
-            delay: []
-            ints: []
+            delays: number[]
+            ints: number[]
             initialFactor: number
             perDay: number
         },
@@ -113,7 +113,7 @@ interface CreateParams {
             hardFactor: number
         },
         lapse: {
-            delays: []
+            delays: number[]
             mult: number
             minInt: number
             leechFails: number

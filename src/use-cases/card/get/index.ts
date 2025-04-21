@@ -23,7 +23,7 @@ export class GetCardsUseCaseImpl implements GetCardsUseCase {
     public async execute(params: Params): Promise<Response> {
         await this.checkDeck(params.deckId)
 
-        const cards = await this.cardRepository.get(this.identifierFactory.construct(params.deckId))
+        const cards = await this.cardRepository.get(params.deckId)
 
         return {
             cards

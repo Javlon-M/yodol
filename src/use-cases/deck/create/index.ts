@@ -28,7 +28,8 @@ export class CreateDeckUseCaseImpl implements CreateDeckUseCase {
             title: params.title,
             active: true,
             userId: params.userId,
-            description: params.description
+            description: params.description,
+            configurations: this.getDefaultConf()
         })
         if (!deck) {
             console.log(`Deck was not created! User id ${params.userId}`)
@@ -36,6 +37,29 @@ export class CreateDeckUseCaseImpl implements CreateDeckUseCase {
 
         return {
             deck
+        }
+    }
+
+    private getDefaultConf(): Configurations {
+        return {
+            new: {
+                'delays': [1, 10],
+                'ints': [1, 4],
+                'initialFactor': 2500,
+                'perDay': 20,
+            },
+            rev: {
+                'perDay': 200,
+                'ease4': 1.3,
+                'maxIvl': 36500,
+                'hardFactor': 1.2,
+            },
+            lapse: {
+                'delays': [10],
+                'mult': 0,
+                'minInt': 1,
+                'leechFails': 8,
+            },
         }
     }
 }
@@ -48,4 +72,25 @@ interface Params {
 
 interface Response {
     deck: Domain.Deck
+}
+
+interface Configurations {
+    new: {
+        delays: number[]
+        ints: number[]
+        initialFactor: number
+        perDay: number
+    },
+    rev: {
+        perDay: number
+        ease4: number
+        maxIvl: number
+        hardFactor: number
+    },
+    lapse: {
+        delays: number[]
+        mult: number
+        minInt: number
+        leechFails: number
+    }
 }

@@ -1,43 +1,58 @@
-import mongoose, { Schema, Document } from "mongoose"
+import mongoose, { Schema, Document, Types } from "mongoose"
 
 
 export interface CardDocument extends Document {
-    deck_id: string
-    front: string
-    back: string
-    level: number
-    schedule_period: number
+    deck_id: Types.ObjectId
     created_at: number
-    level_updated_at: number
+    type: number,
+    queue: number,
+    interval: number,
+    factor: number,
+    repetitions: number,
+    lapses: number,
+    left: number,
+    due: number
 }
 
 const CardSchema = new Schema<CardDocument>(
     {
         deck_id: {
-            type: String,
+            type: Schema.ObjectId,
             required: true
-        },
-        front: {
-            type: String,
-            required: true
-        },
-        back: {
-            type: String,
-            required: true
-        },
-        level: {
-            type: Number,
-            required: true
-        },
-        schedule_period: {
-            type: Number,
-            required: false
         },
         created_at: {
             type: Number,
             required: true
         },
-        level_updated_at: {
+        type: {
+            type: Number,
+            required: true
+        },
+        queue: {
+            type: Number,
+            required: false
+        },
+        interval: {
+            type: Number,
+            required: false
+        },
+        factor: {
+            type: Number,
+            required: false
+        },
+        repetitions: {
+            type: Number,
+            required: true
+        },
+        lapses: {
+            type: Number,
+            required: false
+        },
+        left: {
+            type: Number,
+            required: false
+        },
+        due: {
             type: Number,
             required: false
         }

@@ -17,13 +17,13 @@ export class GetCardsUseCaseImpl implements GetCardsUseCase {
     constructor(
         @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository,
         @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
-        @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
+        @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory
     ) {}
 
     public async execute(params: Params): Promise<Response> {
         await this.checkDeck(params.deckId)
 
-        const cards = await this.cardRepository.get(params.deckId)
+        const cards = await this.cardRepository.findByDeckId(this.identifierFactory.construct(params.deckId))
 
         return {
             cards

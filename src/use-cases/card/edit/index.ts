@@ -9,37 +9,44 @@ import { FactorySymbols } from 'app/factories/dependency-symbols';
 
 
 export interface EditCardUseCase {
-    execute(params: EditParams): Promise<Domain.Card>
+    execute(params: Params): Promise<Response>
 }
 
 @Inversify.injectable()
 export class EditCardUseCaseImpl implements EditCardUseCase {
     constructor(
+      @Inversify.inject(RepositorySymbols.NoteRepository) private noteRepository: Repositories.NoteRepository,
       @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository,
       @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
       ) {}
 
-    public async execute(params: EditParams): Promise<Domain.Card> {
-        const card = await this.cardRepository.update({
-            ...params,
-            id: this.identifierFactory.construct(params.id)
-        })
-
+    public async execute(params: Params): Promise<Response> {
+        const card = await this.cardRepository.findOneById(this.identifierFactory.construct(params.id))
         if (!card) {
             throw new Error("Card not found");
         }
 
-        return card
+        const note = await this.noteRepository.updateByCardId(card.getId(), params.note)
+        if (!note) {
+            throw new Error("Note not found");
+        }
+
+        return {
+            card,
+            note
+        }
     }
 }
 
-interface EditParams {
+interface Params {
     id: string
-    deckId?: string
-    front?: string
-    back?: string
-    level?: Domain.CardLevels
-    schedulePeriod?: number
-    createAt?: number
-    levelUpdatedAt?: number
+    note: {
+        front?: string
+        back?: string
+    }
+}
+
+interface Response {
+    card: Domain.Card
+    note: Domain.Note
 }

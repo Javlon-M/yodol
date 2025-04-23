@@ -1,9 +1,11 @@
 import * as Inversify from "inversify"
 
 import * as Domain from "app/domain"
+import * as Factories from "app/factories"
 import * as Repositories from "app/repositories"
 
 import { RepositorySymbols } from "app/repositories/dependency-symbols"
+import { FactorySymbols } from "app/factories/dependency-symbols"
 
 
 export interface GetUserStatsUseCase {
@@ -14,7 +16,8 @@ export interface GetUserStatsUseCase {
 export class GetUserStatsUseCaseImpl implements GetUserStatsUseCase {
     constructor(
         @Inversify.inject(RepositorySymbols.AttendanceRepository) private attendanceRepository: Repositories.AttendanceRepository,
-        @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository
+        @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository,
+        @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory
     ){}
 
     public async execute(params: Params): Promise<Response> {
@@ -28,7 +31,7 @@ export class GetUserStatsUseCaseImpl implements GetUserStatsUseCase {
     }
 
     private async getCards(deckId: string): Promise<Domain.Card[]> {
-        return await this.cardRepository.findByDeckId(deckId)
+        return await this.cardRepository.findByDeckId(this.identifierFactory.construct(deckId))
     }
 
     private async getCalendar(params: Params): Promise<Domain.Attendance[]> {

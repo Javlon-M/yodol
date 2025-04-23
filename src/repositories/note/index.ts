@@ -12,7 +12,7 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 export interface NoteRepository {
     create(params: CreateParams): Promise<Domain.Note>
     remove(params: RemoveParams): Promise<Domain.Note>
-    update(params: UpdateParams): Promise<Domain.Note>
+    updateByCardId(cardId: Domain.Identifier, params: UpdateParams): Promise<Domain.Note>
     findByCardId(id: Domain.Identifier): Promise<Domain.Note>
 }
 
@@ -20,7 +20,6 @@ export interface NoteRepository {
 export class NoteRepositoryImpl implements NoteRepository {
     constructor(
         @Inversify.inject(FactorySymbols.NoteFactory) private noteFactory: Factories.NoteFactory,
-        @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
     ){}
 
@@ -42,10 +41,10 @@ export class NoteRepositoryImpl implements NoteRepository {
         })
     }
 
-    public async update(params: UpdateParams): Promise<Domain.Note> {
+    public async updateByCardId(cardId: Domain.Identifier, params: UpdateParams): Promise<Domain.Note> {
         const note = await this.storage.getNotesCollection().findOneAndUpdate<Models.NoteDocument>(
             {
-                _id: params.id.toStorageValue()
+                card_id: cardId.toStorageValue()
             }, 
             {
                 $set: params
@@ -91,6 +90,7 @@ interface RemoveParams {
     id: Domain.Identifier
 }
 
-interface UpdateParams extends Partial<CreateParams> {
-    id: Domain.Identifier
+interface UpdateParams {
+    front?: string,
+    back?: string
 }

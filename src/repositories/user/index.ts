@@ -19,7 +19,7 @@ export interface UserRepository {
 @Inversify.injectable()
 export class UserRepositoryImpl implements UserRepository {
     constructor(
-        @Inversify.inject(FactorySymbols.DeckFactory) private userFactory: Factories.UserFactory,
+        @Inversify.inject(FactorySymbols.UserFactory) private userFactory: Factories.UserFactory,
         @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
     ){}

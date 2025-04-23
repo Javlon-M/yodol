@@ -10,6 +10,10 @@ export const RepositoryContainerModule = new ContainerModule((bind: interfaces.B
     bind<Repositories.CardRepository>(RepositorySymbols.CardRepository)
     .to(Repositories.CardRepositoryImpl).inSingletonScope()
 
+    // Note
+    bind<Repositories.NoteRepository>(RepositorySymbols.NoteRepository)
+    .to(Repositories.NoteRepositoryImpl).inSingletonScope()
+
     // Deck
     bind<Repositories.DeckRepository>(RepositorySymbols.DeckRepository)
     .to(Repositories.DeckRepositoryImpl).inSingletonScope()

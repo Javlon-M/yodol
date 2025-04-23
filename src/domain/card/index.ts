@@ -5,12 +5,15 @@ export class Card {
     constructor(
         private id: Domain.Identifier,
         private deckId: Domain.Identifier,
-        private front: string,
-        private back: string,
-        private level: CardLevels,
-        private schedulePeriod: number,
         private createdAt: number,
-        private levelUpdatedAt: number
+        private type: number,
+        private queue: number,
+        private interval: number,
+        private factor: number,
+        private repetitions: number,
+        private lapses: number,
+        private left: number,
+        private due: number
     ){}
 
     public getId(): Domain.Identifier {
@@ -21,34 +24,53 @@ export class Card {
         return this.deckId
     }
 
-    public getFront(): string {
-        return this.front
+    public getType(): CardTypes {
+        return this.type
     }
 
-    public getBack(): string {
-        return this.back
+    public getQueue(): CardQueues {
+        return this.queue
     }
     
-    public getLevel(): CardLevels {
-        return this.level
+    public getInterval(): number {
+        return this.interval
     }
     
-    public getSchedulePeriod(): number {
-        return this.schedulePeriod
+    public getFactor(): number {
+        return this.factor
     }
     
     public getCreatedAt(): number {
         return this.createdAt
     }
     
-    public getLevelUpdatedAt(): number {
-        return this.levelUpdatedAt
+    public getRepetitions(): number {
+        return this.repetitions
+    }
+    
+    public getLapses(): number {
+        return this.lapses
+    }
+
+    public getLeft(): number {
+        return this.left
+    }
+    
+    public getDue(): number {
+        return this.due
     }
 }
 
-export enum CardLevels {
+export enum CardTypes {
     New = 0,
     Learning = 1,
-    Young = 2,
-    Mature = 3
+    Review = 2,
+    Relearning = 3
+}
+
+export enum CardQueues {
+    suspend = -1,
+    new = 0,
+    lrn = 1,
+    rev = 2
 }

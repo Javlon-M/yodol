@@ -10,11 +10,11 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface CardRepository {
-    get(deckId: string): Promise<Domain.Card[]>
+    get(deckId: Domain.Identifier): Promise<Domain.Card[]>
     create(params: CreateParams): Promise<Domain.Card>
     deleteById(id: Domain.Identifier): Promise<Domain.Card>
     update(params: EditParams): Promise<Domain.Card>
-    findByDeckId(deckId: string): Promise<Domain.Card[]>
+    findByDeckId(deckId: Domain.Identifier): Promise<Domain.Card[]>
 }
 
 @Inversify.injectable()
@@ -24,21 +24,24 @@ export class CardRepositoryImpl implements CardRepository {
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
     ) {}
 
-    public async get(deckId: string): Promise<Domain.Card[]> {
-        const cards = await this.storage.getCardsCollection().find({ deck_id: deckId })
+    public async get(deckId: Domain.Identifier): Promise<Domain.Card[]> {
+        const cards = await this.storage.getCardsCollection().find({ deck_id: deckId.toStorageValue() })
 
         return cards.map(this.toDomainEntity.bind(this));
     }
 
     public async create(params: CreateParams): Promise<Domain.Card> {
         const card = await this.storage.getCardsCollection().insertOne({
-            deck_id: params.deckId,
-            front: params.front,
-            back: params.back,
-            level: params.level,
-            schedule_period: params.schedulePeriod,
-            created_at: params.createAt,
-            level_updated_at: params.levelUpdatedAt
+            deck_id: params.deckId.toStorageValue(),
+            created_at: params.createdAt,
+            type: params.type,
+            queue: params.queue,
+            interval: params.interval,
+            repetitions: params.repetitions,
+            factor: params.factor,
+            lapses: params.lapses,
+            left: params.left,
+            due: params.due
         })
 
         return this.toDomainEntity(card)
@@ -68,9 +71,9 @@ export class CardRepositoryImpl implements CardRepository {
         return this.toDomainEntity(card)
     }
 
-    public async findByDeckId(deckId: string): Promise<Domain.Card[]> {
+    public async findByDeckId(deckId: Domain.Identifier): Promise<Domain.Card[]> {
         const cards = await this.storage.getCardsCollection().find<Models.CardDocument>({
-            deck_id: deckId
+            deck_id: deckId.toStorageValue()
         })
 
         return cards.map(this.toDomainEntity.bind(this))
@@ -82,24 +85,30 @@ export class CardRepositoryImpl implements CardRepository {
         return this.cardFactory.construct({
             id: card.id,
             deckId: card.deck_id,
-            front: card.front,
-            back: card.back,
-            level: card.level,
-            schedulePeriod: card.schedule_period,
-            createAt: card.created_at,
-            levelUpdatedAt: card.level_updated_at
+            createdAt: card.created_at,
+            type: card.type,
+            queue: card.queue,
+            interval: card.interval,
+            factor: card.factor,
+            repetitions: card.repetitions,
+            lapses: card.lapses,
+            left: card.left,
+            due: card.due
         })
     }
 }
 
 interface CreateParams {
-    deckId: string
-    front: string
-    back: string
-    level: Domain.CardLevels
-    schedulePeriod: number
-    createAt: number
-    levelUpdatedAt: number
+    deckId: Domain.Identifier
+    createdAt: number
+    type: number
+    queue: number
+    interval: number
+    factor: number
+    repetitions: number
+    lapses: number
+    left: number
+    due: number
 }
 
 interface EditParams extends Partial<CreateParams> {

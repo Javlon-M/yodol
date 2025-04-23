@@ -6,29 +6,23 @@ import * as Factories from "app/factories"
 import { FactorySymbols } from "app/factories/dependency-symbols"
 
 
-export interface CardFactory {
-    construct(params: Params): Domain.Card
+export interface NoteFactory {
+    construct(params: Params): Domain.Note
 }
 
 @Inversify.injectable()
-export class CardFactoryImpl implements CardFactory {
+export class NoteFactoryImpl implements NoteFactory {
     constructor(
         @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory
     ){}
 
-    public construct(params: Params): Domain.Card {
-        return new Domain.Card(
+    public construct(params: Params): Domain.Note {
+        return new Domain.Note(
             this.identifierFactory.construct(params.id.toHexString()),
             this.identifierFactory.construct(params.deckId.toHexString()),
             params.createdAt,
-            params.type,
-            params.queue,
-            params.interval,
-            params.factor,
-            params.repetitions,
-            params.lapses,
-            params.left,
-            params.due
+            params.front,
+            params.back
         )
     }
 }
@@ -37,12 +31,6 @@ interface Params{
     id: Domain.StorageValue
     deckId: Domain.StorageValue
     createdAt: number
-    type: number
-    queue: number
-    interval: number
-    factor: number
-    repetitions: number
-    lapses: number
-    left: number
-    due: number
+    front: string
+    back: string
 }

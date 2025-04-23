@@ -7,6 +7,10 @@ import { FactorySymbols } from "./dependency-symbols"
 import { UserFactoryImpl, UserFactory } from "app/factories/user";
 
 export const FactoryContainerModule = new ContainerModule((bind: interfaces.Bind) => {
+    // Note
+    bind<Factories.NoteFactory>(FactorySymbols.NoteFactory)
+    .to(Factories.NoteFactoryImpl).inSingletonScope()
+
     // Card
     bind<Factories.CardFactory>(FactorySymbols.CardFactory)
     .to(Factories.CardFactoryImpl).inSingletonScope()

@@ -17,28 +17,50 @@ export class CreateCardUseCaseImpl implements CreateCardUseCase {
     constructor(
         @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository,
         @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
+        @Inversify.inject(RepositorySymbols.NoteRepository) private noteRepository: Repositories.NoteRepository,
         @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
     ) {}
 
     public async execute(params: Params): Promise<Response> {
         await this.checkDeck(params.deckId)
-
-        const level = Domain.CardLevels.New
+        
         const now = new Date()
-        const schedulePeriod = 300
+        const initCard = {
+            deckId: this.identifierFactory.construct(params.deckId),
+            type: Domain.CardTypes.New,
+            queue: Domain.CardQueues.new,
+            interval: 0,
+            factor: 2.5,
+            reps: 0,
+            lapses: 0,
+            left: 0,
+            due: now.getTime()
+        }
 
         const card = await this.cardRepository.create({
-            deckId: params.deckId,
-            front: params.front,
-            back: params.back,
-            level: level,
-            schedulePeriod: schedulePeriod,
-            createAt: now.getTime(),
-            levelUpdatedAt: now.getTime()
+            deckId: initCard.deckId,
+            createdAt: now.getDate(),
+            type: initCard.type,
+            queue: initCard.queue,
+            interval: initCard.interval,
+            factor: initCard.factor,
+            repetitions: initCard.reps,
+            lapses: initCard.lapses,
+            left: initCard.left,
+            due: initCard.due
+        })
+
+        const note = await this.noteRepository.create({
+            deckId: initCard.deckId,
+            cardId: card.getId(),
+            front: params.note.front,
+            back: params.note.back,
+            createdAt: now.getTime()
         })
 
         return {
-            card
+            card,
+            note
         }
     }
 
@@ -53,10 +75,13 @@ export class CreateCardUseCaseImpl implements CreateCardUseCase {
 
 interface Params {
     deckId: string
-    front: string
-    back: string
+    note: {
+        front: string
+        back: string
+    }
 }
 
 interface Response {
-    card: Domain.Card
+    card: Domain.Card,
+    note: Domain.Note
 }

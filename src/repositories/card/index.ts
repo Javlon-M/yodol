@@ -10,10 +10,10 @@ import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
 export interface CardRepository {
-    get(deckId: Domain.Identifier): Promise<Domain.Card[]>
     create(params: CreateParams): Promise<Domain.Card>
     deleteById(id: Domain.Identifier): Promise<Domain.Card>
     update(params: EditParams): Promise<Domain.Card>
+    findOneById(id: Domain.Identifier): Promise<Domain.Card>
     findByDeckId(deckId: Domain.Identifier): Promise<Domain.Card[]>
 }
 
@@ -24,10 +24,10 @@ export class CardRepositoryImpl implements CardRepository {
         @Inversify.inject(ComponentsSymbols.MongooseStorage) private storage: Infrastructure.Storage,
     ) {}
 
-    public async get(deckId: Domain.Identifier): Promise<Domain.Card[]> {
-        const cards = await this.storage.getCardsCollection().find({ deck_id: deckId.toStorageValue() })
+    public async findOneById(id: Domain.Identifier): Promise<Domain.Card> {
+        const card = await this.storage.getCardsCollection().findOne({ id: id.toStorageValue() })
 
-        return cards.map(this.toDomainEntity.bind(this));
+        return this.toDomainEntity(card)
     }
 
     public async create(params: CreateParams): Promise<Domain.Card> {

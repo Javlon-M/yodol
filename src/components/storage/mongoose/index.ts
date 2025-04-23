@@ -66,6 +66,10 @@ export class MongooseStorageImpl implements Infrastructure.Storage {
         return Models.UserModel
     }
 
+    public getNotesCollection(): typeof Models.NoteModel {
+        return Models.NoteModel
+    }
+
     public getAttendancesCollection(): typeof Models.AttendanceModel {
         return Models.AttendanceModel
     }

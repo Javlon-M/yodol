@@ -11,5 +11,7 @@ export interface Storage {
 
     getUsersCollection(): typeof Models.UserModel
 
+    getNotesCollection(): typeof Models.NoteModel
+
     getAttendancesCollection(): typeof Models.AttendanceModel
 }

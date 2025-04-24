@@ -15,6 +15,7 @@ export interface CardRepository {
     update(params: EditParams): Promise<Domain.Card>
     findOneById(id: Domain.Identifier): Promise<Domain.Card>
     findByDeckId(deckId: Domain.Identifier): Promise<Domain.Card[]>
+    findByFilter(filter: Filter): Promise<Domain.Card[]>
 }
 
 @Inversify.injectable()
@@ -79,6 +80,19 @@ export class CardRepositoryImpl implements CardRepository {
         return cards.map(this.toDomainEntity.bind(this))
     }
 
+    public async findByFilter(filter: Filter): Promise<Domain.Card[]> {
+        const cards = await this.storage.getCardsCollection().find<Models.CardDocument>({
+            deck_id: filter.deckId.toStorageValue(),
+            due: { $lte: filter.due }
+        }, 
+        {
+            sort: filter.sort,
+            limit: filter.limit
+        })
+
+        return cards.map(this.toDomainEntity.bind(this))
+    }
+
     private toDomainEntity(card: Models.CardDocument): Domain.Card {
         if (!card) return null
 
@@ -113,4 +127,16 @@ interface CreateParams {
 
 interface EditParams extends Partial<CreateParams> {
     id: Domain.Identifier
+}
+
+interface Filter {
+    deckId: Domain.Identifier
+    due: number
+    limit: number
+    sort: Sort
+}
+
+export enum Sort {
+    Ascending = -1,
+    Descending = 1
 }

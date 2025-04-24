@@ -15,6 +15,7 @@ export interface GetCardsUseCase {
 @Inversify.injectable()
 export class GetCardsUseCaseImpl implements GetCardsUseCase {
     constructor(
+        @Inversify.inject(RepositorySymbols.NoteRepository) private noteRepository: Repositories.NoteRepository,
         @Inversify.inject(RepositorySymbols.CardRepository) private cardRepository: Repositories.CardRepository,
         @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
         @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory
@@ -23,11 +24,32 @@ export class GetCardsUseCaseImpl implements GetCardsUseCase {
     public async execute(params: Params): Promise<Response> {
         await this.checkDeck(params.deckId)
 
-        const cards = await this.cardRepository.findByDeckId(this.identifierFactory.construct(params.deckId))
+        const cards = await this.cardRepository.findByFilter({
+            deckId: this.identifierFactory.construct(params.deckId),
+            due: params.due,
+            sort: params.sort,
+            limit: params.limit
+        })
 
-        return {
-            cards
+        const ids = cards.map((card) => card.getId().toStorageValue())
+        const notes = await this.noteRepository.findByCardIds(ids)
+
+        return this.getCardWithNote(cards, notes)
+    }
+
+    private getCardWithNote(cards: Domain.Card[], notes: Domain.Note[]): CardWithNote[] {
+        const cardWithNote: CardWithNote[] = []
+
+        for (const card of cards) {
+            const note = notes.find((n) => n.getCardId().toString() === card.getId().toString())
+
+            cardWithNote.push({
+                card,
+                note
+            })
         }
+
+        return cardWithNote
     }
 
     private async checkDeck(deckId: string): Promise<void> {
@@ -41,8 +63,14 @@ export class GetCardsUseCaseImpl implements GetCardsUseCase {
 
 interface Params {
     deckId: string
+    due: number
+    limit: number
+    sort: Repositories.Sort
 }
 
-interface Response {
-    cards: Domain.Card[]
+type Response = CardWithNote[]
+
+interface CardWithNote {
+    card: Domain.Card
+    note: Domain.Note
 }

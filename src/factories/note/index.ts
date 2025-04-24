@@ -19,6 +19,7 @@ export class NoteFactoryImpl implements NoteFactory {
     public construct(params: Params): Domain.Note {
         return new Domain.Note(
             this.identifierFactory.construct(params.id.toHexString()),
+            this.identifierFactory.construct(params.cardId.toHexString()),
             this.identifierFactory.construct(params.deckId.toHexString()),
             params.createdAt,
             params.front,
@@ -29,6 +30,7 @@ export class NoteFactoryImpl implements NoteFactory {
 
 interface Params{
     id: Domain.StorageValue
+    cardId: Domain.StorageValue
     deckId: Domain.StorageValue
     createdAt: number
     front: string

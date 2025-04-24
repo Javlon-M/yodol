@@ -14,6 +14,7 @@ export interface NoteRepository {
     remove(params: RemoveParams): Promise<Domain.Note>
     updateByCardId(cardId: Domain.Identifier, params: UpdateParams): Promise<Domain.Note>
     findByCardId(id: Domain.Identifier): Promise<Domain.Note>
+    findByCardIds(ids: Domain.StorageValue[]): Promise<Domain.Note[]>
 }
 
 @Inversify.injectable()
@@ -58,11 +59,19 @@ export class NoteRepositoryImpl implements NoteRepository {
     }
 
     public async findByCardId(id: Domain.Identifier): Promise<Domain.Note> {
-        const note = await this.storage.getNotesCollection().findById<Models.NoteDocument>({
+        const note = await this.storage.getNotesCollection().findOne<Models.NoteDocument>({
             "card_id": id.toStorageValue()
         })
 
         return this.toDomainEntity(note)
+    }
+
+    public async findByCardIds(ids: Domain.StorageValue[]): Promise<Domain.Note[]> {
+        const notes = await this.storage.getNotesCollection().find<Models.NoteDocument>({
+            "card_id": { $in: ids }
+        })
+
+        return notes.map(this.toDomainEntity.bind(this))
     }
 
     private toDomainEntity(note: Models.NoteDocument): Domain.Note {
@@ -70,6 +79,7 @@ export class NoteRepositoryImpl implements NoteRepository {
 
         return this.noteFactory.construct({
             id: note.id,
+            cardId: note.card_id,
             deckId: note.deck_id,
             front: note.front,
             back: note.back,

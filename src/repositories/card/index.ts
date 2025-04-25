@@ -83,6 +83,7 @@ export class CardRepositoryImpl implements CardRepository {
     public async findByFilter(filter: Filter): Promise<Domain.Card[]> {
         const cards = await this.storage.getCardsCollection().find<Models.CardDocument>({
             deck_id: filter.deckId.toStorageValue(),
+            queue: filter.queue,
             due: { $lte: filter.due }
         }, 
         {
@@ -131,6 +132,7 @@ interface EditParams extends Partial<CreateParams> {
 
 interface Filter {
     deckId: Domain.Identifier
+    queue: Domain.CardQueues
     due: number
     limit: number
     sort: Sort

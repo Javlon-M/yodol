@@ -26,6 +26,7 @@ export class GetCardsUseCaseImpl implements GetCardsUseCase {
 
         const cards = await this.cardRepository.findByFilter({
             deckId: this.identifierFactory.construct(params.deckId),
+            queue: params.queue,
             due: params.due,
             sort: params.sort,
             limit: params.limit
@@ -63,6 +64,7 @@ export class GetCardsUseCaseImpl implements GetCardsUseCase {
 
 interface Params {
     deckId: string
+    queue: Domain.CardQueues
     due: number
     limit: number
     sort: Repositories.Sort

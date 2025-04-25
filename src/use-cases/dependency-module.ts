@@ -32,6 +32,9 @@ export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind
     bind<Usecases.GetCardsUseCase>(UseCaseSymbols.GetCardsUseCase)
     .to(Usecases.GetCardsUseCaseImpl).inSingletonScope()
 
+    bind<Usecases.ManageAndGetCarsUseCase>(UseCaseSymbols.ManageAndGetCarsUseCase)
+    .to(Usecases.ManageAndGetCarsUseCaseImpl).inSingletonScope()
+
     // User
     bind<Usecases.CreateUserUseCase>(UseCaseSymbols.CreateUserUseCase)
     .to(Usecases.CreateUserUseCaseImpl).inSingletonScope()

@@ -67,7 +67,7 @@ interface Params {
     queue: Domain.CardQueues
     due: number
     limit: number
-    sort: Repositories.Sort
+    sort?: Repositories.Sort
 }
 
 type Response = CardWithNote[]

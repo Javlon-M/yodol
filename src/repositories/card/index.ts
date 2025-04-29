@@ -87,7 +87,7 @@ export class CardRepositoryImpl implements CardRepository {
             due: { $lte: filter.due }
         }, 
         {
-            sort: filter.sort,
+            sort: filter.sort ? filter.sort : Sort.Ascending,
             limit: filter.limit
         })
 

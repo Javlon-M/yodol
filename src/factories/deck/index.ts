@@ -1,6 +1,10 @@
 import * as Inversify from "inversify"
 
 import * as Domain from "app/domain"
+import * as Factories from "app/factories"
+
+import { FactorySymbols } from "app/factories/dependency-symbols"
+
 
 export interface DeckFactory {
     construct(params: Params): Domain.Deck
@@ -8,9 +12,13 @@ export interface DeckFactory {
 
 @Inversify.injectable()
 export class DeckFactoryImpl implements DeckFactory {
+    constructor(
+        @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
+    ){}
+
     construct(params: Params): Domain.Deck {
         return new Domain.Deck(
-            params.id,
+            this.identifierFactory.construct(params.id.toHexString()),
             params.userId,
             params.title,
             params.active,
@@ -21,7 +29,7 @@ export class DeckFactoryImpl implements DeckFactory {
 }
 
 export interface Params {
-    id: string
+    id: Domain.StorageValue
     userId: string
     title: string
     active: boolean

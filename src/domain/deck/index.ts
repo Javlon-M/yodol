@@ -1,6 +1,8 @@
+import * as Domain from "app/domain"
+
 export class Deck {
     constructor(
-        private id: string,
+        private id: Domain.Identifier,
         private userId: string,
         private title: string,
         private active: boolean,
@@ -8,7 +10,7 @@ export class Deck {
         private description?: string
     ) {}
 
-    public getId(): string {
+    public getId(): Domain.Identifier {
         return this.id
     }
 

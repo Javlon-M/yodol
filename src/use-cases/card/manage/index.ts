@@ -4,82 +4,92 @@ import * as Domain from "app/domain"
 import * as UseCases from "app/use-cases"
 import * as Factories from "app/factories"
 import * as Repositories from "app/repositories"
+import * as Infrastructure from "app/infrastructure"
 
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols"
 import { FactorySymbols } from "app/factories/dependency-symbols"
 import { RepositorySymbols } from "app/repositories/dependency-symbols"
+import { ComponentsSymbols } from "app/components/dependency-symbols"
 
 
-export interface ManageAndGetCarsUseCase {
+export interface ManageAndGetCardUseCase {
     execute(params: Params): Promise<Response>
 }
 
 @Inversify.injectable()
-export class ManageAndGetCarsUseCaseImpl implements ManageAndGetCarsUseCase {
-    private lrnQueue: CardWithNote[]
-    private newQueue: CardWithNote[]
-    private revQueue: CardWithNote[]
-    private reps: number = 0
-
+export class ManageAndGetCardUseCaseImpl implements ManageAndGetCardUseCase {
     constructor(
+        @Inversify.inject(ComponentsSymbols.Cache) private cache: Infrastructure.Cache,
         @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
         @Inversify.inject(RepositorySymbols.DeckRepository) private deckRepository: Repositories.DeckRepository,
+        @Inversify.inject(RepositorySymbols.UserRepository) private userRepository: Repositories.UserRepository,
         @Inversify.inject(UseCaseSymbols.GetCardsUseCase) private getCardsUseCase: UseCases.GetCardsUseCase,
-    ) {
-        this.reset()
-    }
+    ) {}
 
     public async execute(params: Params): Promise<Response> {
-        const deck = await this.deckRepository.findById(this.identifierFactory.construct(params.deckId))
-        if (!deck) {
-            throw new Error(`Deck was not found. Deck id ${params.deckId}`)
-        }
-        
-        const card = await this.getCard(deck)
+        const { user, deck } = await this.getDeckAndUser(params.userId, params.deckId)
+        const session: Session = JSON.parse(await this.cache.get(user.getId().toString()))
+
+        const card = await this.getCard(user.getId(), deck)
         if (card) {
-            this.reps += 1
+            session.reps += 1
+            
+            const expireInSeconds = this.getOptions().sessionTimeOutMinutes * 60
+
+            await this.cache.set(user.getId().toString(), JSON.stringify(session), expireInSeconds)
         }
 
         return card
     }
 
-    private reset(): void {
-        this.lrnQueue = []
-        this.newQueue = []
-        this.revQueue = []
+    private async getDeckAndUser(userId: string, deckId: string): Promise<{ user: Domain.User, deck: Domain.Deck }> {
+        const user = await this.userRepository.findById(this.identifierFactory.construct(userId))
+        if (!user) {
+            throw new Error(`User was not found. User id ${userId}`)
+        }
+
+        const deck = await this.deckRepository.findById(this.identifierFactory.construct(deckId))
+        if (!deck) {
+            throw new Error(`Deck was not found. Deck id ${deckId}`)
+        }
+
+        return {
+            user, 
+            deck
+        }
     }
 
-    private async getCard(deck: Domain.Deck): Promise<CardWithNote> {
-        let card = await this.getLrnCard(deck.getId())
+    private async getCard(userId: Domain.Identifier, deck: Domain.Deck): Promise<CardWithNote> {
+        let card = await this.getLrnCard(userId, deck.getId())
         if (card) {
             return card
         }
         
-        if (this.isTimeForNew()) {
-            card = await this.getNewCard(deck)
+        if (this.isTimeForNew(userId)) {
+            card = await this.getNewCard(userId, deck)
             if (card) {
                 return card
             }
         }
 
-        card = await this.getRevCard(deck)
+        card = await this.getRevCard(userId, deck)
         if (card) {
             return card
         }
 
-        card = await this.getNewCard(deck)
+        card = await this.getNewCard(userId, deck)
         if (card) {
             return card
         }
 
-        return await this.getLrnCard(deck.getId(), true)
+        return await this.getLrnCard(userId, deck.getId(), true)
     }
 
-    private getNewCardModulus(): number {
-        if (!this.newQueue.length) return 0
+    private getNewCardModulus(queue: Queue): number {
+        if (!queue.new.length) return 0
 
-        const newCount = this.newQueue.length
-        const revCount = this.revQueue.length
+        const newCount = queue.new.length
+        const revCount = queue.rev.length
 
         let newCardModulus = Math.floor((newCount + revCount) / newCount)
 
@@ -90,62 +100,85 @@ export class ManageAndGetCarsUseCaseImpl implements ManageAndGetCarsUseCase {
         return newCardModulus
     }
 
-    private isTimeForNew(): boolean {
-        const newCardModulus = this.getNewCardModulus()
+    private async isTimeForNew(userId: Domain.Identifier): Promise<boolean> {
+        const session: Session = JSON.parse(await this.cache.get(userId.toString()))
 
-        if (!newCardModulus || !this.reps) return false
+        const newCardModulus = this.getNewCardModulus(session.queue)
 
-        return this.reps % newCardModulus === 0
+        if (!newCardModulus || !session.reps) return false
+
+        return session.reps % newCardModulus === 0
     }
 
-    private async getNewCard(deck: Domain.Deck): Promise<CardWithNote> {
-        if (this.newQueue.length) return this.newQueue.pop()
+    private async getNewCard(userId: Domain.Identifier, deck: Domain.Deck): Promise<CardWithNote> {
+        const session = JSON.parse(await this.cache.get(userId.toString()))
+
+        if (session.queue.new.length) return session.queue.new.pop()
 
         const options = this.getOptions()
         const limit = Math.min(deck.getConfigurations().new.perDay, options.queueLimit)
         const due = this.getDue(options.collapseTime)
 
-        this.newQueue = await this.getCardsUseCase.execute({
+        const newQueue = await this.getCardsUseCase.execute({
             deckId: deck.getId().toString(),
             queue: Domain.CardQueues.new,
             due: due,
             limit: limit
         })
 
-        return this.newQueue.pop()
+        session.queue.new = newQueue
+        const expireInSeconds = options.sessionTimeOutMinutes * 60
+
+        await this.cache.set(userId.toString(), JSON.stringify(session), expireInSeconds)
+
+        return newQueue.pop()
     }
 
-    private async getLrnCard(deckId: Domain.Identifier, collapse?: boolean): Promise<CardWithNote> {
-        if (this.lrnQueue.length) return this.lrnQueue.pop()
+    private async getLrnCard(userId: Domain.Identifier, deckId: Domain.Identifier, collapse?: boolean): Promise<CardWithNote> {
+        const session: Session = JSON.parse(await this.cache.get(userId.toString()))
+
+        if (session.queue.lrn.length) return session.queue.lrn.pop()
 
         const options = this.getOptions()
         const due = this.getDue(options.collapseTime, collapse)
 
-        this.lrnQueue = await this.getCardsUseCase.execute({
+        const lrnQueue = await this.getCardsUseCase.execute({
             deckId: deckId.toString(),
             queue: Domain.CardQueues.lrn,
             due: due,
             limit: options.reportLimit
         })
 
-        return this.lrnQueue.pop()
+        session.queue.lrn = lrnQueue
+        const expireInSeconds = options.sessionTimeOutMinutes * 60
+
+        await this.cache.set(userId.toString(), JSON.stringify(session), expireInSeconds)
+
+        return lrnQueue.pop()
     }
 
-    private async getRevCard(deck: Domain.Deck): Promise<CardWithNote> {
-        if (this.revQueue.length) return this.revQueue.pop()
+    private async getRevCard(userId: Domain.Identifier, deck: Domain.Deck): Promise<CardWithNote> {
+        const session: Session = JSON.parse(await this.cache.get(userId.toString()))
+
+        if (session.queue.rev.length) return session.queue.rev.pop()
 
         const options = this.getOptions()
         const limit = Math.min(deck.getConfigurations().rev.perDay, options.queueLimit)
         const due = this.getDue(options.collapseTime)
 
-        this.revQueue = await this.getCardsUseCase.execute({
+        const revQueue = await this.getCardsUseCase.execute({
             deckId: deck.getId().toString(),
             queue: Domain.CardQueues.rev,
             due: due,
             limit: limit
         })
 
-        return this.revQueue.pop()
+        session.queue.rev = revQueue
+        const expireInSeconds = options.sessionTimeOutMinutes * 60
+
+        await this.cache.set(userId.toString(), JSON.stringify(session), expireInSeconds)
+
+        return revQueue.pop()
     }
 
     private getDue(collapseTime: number, collapse?: boolean): number {
@@ -156,26 +189,38 @@ export class ManageAndGetCarsUseCaseImpl implements ManageAndGetCarsUseCase {
         return {
             queueLimit: parseInt(process.env.QUEUE_LIMIT),
             reportLimit: parseInt(process.env.REPORT_LIMIT),
-            collapseTime: parseInt(process.env.COLLAPSE_TIME)
+            collapseTime: parseInt(process.env.COLLAPSE_TIME),
+            sessionTimeOutMinutes: parseInt(process.env.SESSION_TIMEOUT_MINUTES),
         }
     }
 }
 
 interface Params {
     deckId: string
+    userId: string
 }
 
-interface Response {
+type Response = CardWithNote
 
+interface CardWithNote {
+    card: Domain.Card
+    note: Domain.Note
+}
+
+interface Session {
+    reps: number
+    queue: Queue
+}
+
+interface Queue {
+    lrn: CardWithNote[],
+    new: CardWithNote[],
+    rev: CardWithNote[]
 }
 
 interface Options {
     queueLimit: number
     reportLimit: number
     collapseTime: number
-}
-
-interface CardWithNote {
-    card: Domain.Card
-    note: Domain.Note
+    sessionTimeOutMinutes: number
 }

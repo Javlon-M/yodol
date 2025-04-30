@@ -6,5 +6,9 @@ import * as Components from "app/components"
 import { ComponentsSymbols } from "./dependency-symbols"
 
 export const ComponentsContainerModule = new ContainerModule((bind: interfaces.Bind) => {
-    bind<Infrastructure.Storage>(ComponentsSymbols.MongooseStorage).to(Components.MongooseStorageImpl)
+    bind<Infrastructure.Storage>(ComponentsSymbols.MongooseStorage)
+    .to(Components.MongooseStorageImpl).inSingletonScope()
+
+    bind<Infrastructure.Cache>(ComponentsSymbols.Cache)
+    .to(Components.CacheImpl).inSingletonScope()
 })

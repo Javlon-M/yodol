@@ -1,3 +1,4 @@
 export const ComponentsSymbols = {
-    MongooseStorage: Symbol("MongooseStorage")
+    MongooseStorage: Symbol("MongooseStorage"),
+    Cache: Symbol("Cache")
 }

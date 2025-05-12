@@ -11,6 +11,7 @@ export const UseCaseSymbols = {
     EditCardUseCase: Symbol("EditCardUseCase"),
     GetCardsUseCase: Symbol("GetCardsUseCase"),
     ManageAndGetCardUseCase: Symbol("ManageAndGetCardUseCase"),
+    AnswerCardUseCase: Symbol("AnswerCardUseCase"),
 
     // User
     CreateUserUseCase: Symbol("CreateUserUseCase"),

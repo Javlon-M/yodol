@@ -16,7 +16,7 @@ export class DeckFactoryImpl implements DeckFactory {
         @Inversify.inject(FactorySymbols.IdentifierFactory) private identifierFactory: Factories.IdentifierFactory,
     ){}
 
-    construct(params: Params): Domain.Deck {
+    public construct(params: Params): Domain.Deck {
         return new Domain.Deck(
             this.identifierFactory.construct(params.id.toHexString()),
             params.userId,
@@ -36,8 +36,8 @@ export interface Params {
     description?: string
     configurations: {
         new: {
-            delay: []
-            ints: []
+            delays: number[]
+            ints: number[]
             initialFactor: number
             perDay: number
         },
@@ -48,7 +48,7 @@ export interface Params {
             hardFactor: number
         },
         lapse: {
-            delays: []
+            delays: number[]
             mult: number
             minInt: number
             leechFails: number

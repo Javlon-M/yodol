@@ -7,7 +7,7 @@ export interface DeckDocument extends Document {
     description?: string
     configurations: {
         new: {
-            delay: []
+            delays: []
             ints: []
             initialFactor: number
             perDay: number
@@ -48,7 +48,7 @@ const DeckSchema = new Schema<DeckDocument>(
         configurations: {
             type: {
                 new: {
-                    delay: {
+                    delays: {
                         type: Array,
                         required: true
                     },

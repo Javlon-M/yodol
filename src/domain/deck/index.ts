@@ -34,11 +34,11 @@ export class Deck {
         return this.configurations
     }
 
-    public getConfigurationsNewDelay(): [] {
-        return this.configurations.new.delay
+    public getConfigurationsNewDelays(): number[] {
+        return this.configurations.new.delays
     }
     
-    public getConfigurationsNewInts(): [] {
+    public getConfigurationsNewInts(): number[] {
         return this.configurations.new.ints
     }
 
@@ -66,7 +66,7 @@ export class Deck {
         return this.configurations.rev.hardFactor
     }
 
-    public getConfigurationsLapseDelays(): [] {
+    public getConfigurationsLapseDelays(): number[] {
         return this.configurations.lapse.delays
     }
 
@@ -85,21 +85,21 @@ export class Deck {
 
 interface Configurations {
         new: {
-            delay: [],
-            ints: [],
-            initialFactor: number,
-            perDay: number,
+            delays: number[]
+            ints: number[]
+            initialFactor: number
+            perDay: number
         }
         rev: {
-            perDay: number,
-            ease4: number,
-            maxIvl: number,
-            hardFactor: number,
+            perDay: number
+            ease4: number
+            maxIvl: number
+            hardFactor: number
         },
         lapse: {
-            delays: [],
-            mult: number,
-            minInt: number,
+            delays: number[]
+            mult: number
+            minInt: number
             leechFails: number
         }
 }

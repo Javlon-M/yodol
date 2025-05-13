@@ -34,14 +34,14 @@ export class AnswerCardUseCaseImpl implements AnswerCardUseCase {
             throw new Error("Deck was not found")
         }
 
-        if (card.getType() === Domain.CardTypes.New) {
-            await this.answerNewCard(card)
+        if (card.getQueue() === Domain.CardQueues.new) {
+            await this.answerNewCard(card, deck)
         }
-        else if ([Domain.CardTypes.Learning, Domain.CardTypes.Relearning].includes(card.getType())) {
-            await this.answerLrnCard(params)
+        else if ([Domain.CardQueues.lrn, Domain.CardQueues.suspend].includes(card.getQueue())) {
+            await this.answerLrnCard(card, deck, params.ease)
         }
         else {
-            await this.answerRevCard(params)
+            await this.answerRevCard(card, deck)
         }
 
         return {
@@ -49,25 +49,68 @@ export class AnswerCardUseCaseImpl implements AnswerCardUseCase {
         }
     }
 
-    private async answerNewCard(card: Domain.Card) {
+    private async answerNewCard(card: Domain.Card, deck: Domain.Deck) {
         const reps = card.getRepetitions() + 1
-        const left = 0
+        const conf = this.getConf(card, deck)
 
         await this.cardRepository.update({
             id: card.getId(),
             repetitions: reps,
             queue: 1,
             type: 1,
-            left: left
+            left: conf.delays.length
         })
     }
 
-    private async answerLrnCard(params: Params) {
+    private async answerLrnCard(card: Domain.Card, deck: Domain.Deck, ease: number) {
+        const conf = this.getConf(card, deck)
+
+        if (ease === 4) {
+            await this.reschaduleAsRev(card, conf, true)
+        }
+        else if (ease === 3) {
+            if (card.getLeft() - 1 <= 0) {
+                await this.reschaduleAsRev(card, conf, true)
+            }
+            else {
+                await this.moveToNextStep(card, conf)
+            }
+        }
+        else if (ease == 2) {
+            await this.repeatStep(card, conf)
+        }
+        else {
+            await this.moveToFirstStep(card, conf)
+        }
+    }
+
+    private async reschaduleAsRev(card: Domain.Card, conf: Conf, early: boolean) {
+
+    }
+
+    private async moveToNextStep(card: Domain.Card, conf: Conf) {
+
+    }
+
+    private async repeatStep(card: Domain.Card, conf: Conf) {
+
+    }
+
+    private async moveToFirstStep(card: Domain.Card, conf: Conf) {
+
+    }
+
+    private async answerRevCard(card: Domain.Card, deck: Domain.Deck) {
         
     }
 
-    private async answerRevCard(params: Params) {
-        
+    private getConf(card: Domain.Card, deck: Domain.Deck): Conf {
+        if (card.getType() === Domain.CardTypes.Review) {
+            return deck.getConfigurations().lapse
+        }
+        else {
+            return deck.getConfigurations().new
+        }
     }
 
     private async validateEase(ease: number): Promise<void> {
@@ -84,4 +127,20 @@ interface Params {
 
 interface Response {
     cardId: Domain.Identifier
+}
+
+type Conf = ConfNew | ConfLapse
+
+interface ConfNew {
+    delays: number[]
+    ints: number[]
+    initialFactor: number
+    perDay: number
+}
+
+interface ConfLapse {
+    delays: number[]
+    mult: number
+    minInt: number
+    leechFails: number
 }

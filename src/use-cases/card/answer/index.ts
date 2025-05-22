@@ -34,28 +34,37 @@ export class AnswerCardUseCaseImpl implements AnswerCardUseCase {
             throw new Error("Deck was not found")
         }
 
-        if (card.getQueue() === Domain.CardQueues.new) {
-            await this.answerNewCard(card, deck)
+        const updatedCard = await this.incRepetitions(card)
+
+        if (updatedCard.getQueue() === Domain.CardQueues.new) {
+            await this.answerNewCard(updatedCard, deck)
         }
-        else if ([Domain.CardQueues.lrn, Domain.CardQueues.suspend].includes(card.getQueue())) {
-            await this.answerLrnCard(card, deck, params.ease)
+        else if ([Domain.CardQueues.lrn, Domain.CardQueues.suspend].includes(updatedCard.getQueue())) {
+            await this.answerLrnCard(updatedCard, deck, params.ease)
         }
         else {
-            await this.answerRevCard(card, deck)
+            await this.answerRevCard(updatedCard, deck)
         }
 
         return {
-            cardId: card.getId()
+            cardId: updatedCard.getId()
         }
     }
 
-    private async answerNewCard(card: Domain.Card, deck: Domain.Deck): Promise<Domain.Card> {
+    private async incRepetitions(card: Domain.Card): Promise<Domain.Card> {
         const reps = card.getRepetitions() + 1
+
+        return await this.cardRepository.update({
+            id: card.getId(),
+            repetitions: reps
+        })
+    }
+
+    private async answerNewCard(card: Domain.Card, deck: Domain.Deck): Promise<Domain.Card> {
         const conf = this.getConf(card, deck)
 
         return await this.cardRepository.update({
             id: card.getId(),
-            repetitions: reps,
             queue: 1,
             type: 1,
             left: conf.delays.length

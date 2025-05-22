@@ -22,18 +22,7 @@ export class AnswerCardUseCaseImpl implements AnswerCardUseCase {
     ) {}
 
     public async execute(params: Params): Promise<Response> {
-        this.validateEase(params.ease)
-
-        const card = await this.cardRepository.findOneById(this.identifierFactory.construct(params.cardId))
-        if (!card) {
-            throw new Error("Card was not found")
-        }
-
-        const deck = await this.deckRepository.findById(card.getDeckId())
-        if (!deck) {
-            throw new Error("Deck was not found")
-        }
-
+        const { card, deck } = await this.validateInput(params)
         const updatedCard = await this.incRepetitions(card)
 
         if (updatedCard.getQueue() === Domain.CardQueues.new) {
@@ -218,9 +207,24 @@ export class AnswerCardUseCaseImpl implements AnswerCardUseCase {
         }
     }
 
-    private async validateEase(ease: number): Promise<void> {
-        if (ease < 1 || ease > 4) {
+    private async validateInput(params: Params): Promise<{ card: Domain.Card, deck: Domain.Deck }> {
+        if (params.ease < 1 || params.ease > 4) {
             throw new Error("Ease is not valid")
+        }
+
+        const card = await this.cardRepository.findOneById(this.identifierFactory.construct(params.cardId))
+        if (!card) {
+            throw new Error("Card was not found")
+        }
+
+        const deck = await this.deckRepository.findById(card.getDeckId())
+        if (!deck) {
+            throw new Error("Deck was not found")
+        }
+
+        return {
+            card, 
+            deck
         }
     }
 }

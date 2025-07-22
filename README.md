@@ -67,6 +67,18 @@ To start using Yodol:
 
 This project was collaboratively developed by a dedicated team of 6 developers, combining expertise in TypeScript, Node.js, and educational technology.
 
+## ⚡ Development Methodology
+
+Yodol was built using Agile methodologies, ensuring:
+- Iterative development with regular sprints
+- Continuous feedback and improvement cycles
+- Collaborative team approach with daily standups
+- Flexible adaptation to changing requirements
+- Regular delivery of working software increments
+- Close collaboration between team members throughout the development process
+
+This Agile approach allowed our team to efficiently deliver a robust and user-focused learning platform while maintaining high code quality and team productivity.
+
 ## 🌐 Supported Languages
 
 - Uzbek (Current)

@@ -35,7 +35,7 @@ A powerful Telegram bot that helps users memorize and learn effectively using th
 This project follows **Domain-Driven Design (DDD)** principles, ensuring clean separation of concerns and maintainable code structure. The architecture promotes scalability and clear business logic organization.
 
 ### Project Architecture Diagram
-View our detailed system architecture on [Miro](https://miro.com/app/board/uXjVISX8ekk=/)
+View our detailed system architecture on [Miro](https://miro.com/app/board/uXjVISX8ekk=/?share_link_id=111381371380)
 
 ## 🛠️ Technology Stack
 
@@ -90,7 +90,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **Architecture Diagram**: [Miro Board](https://miro.com/app/board/uXjVISX8ekk=/)
+- **Architecture Diagram**: [Miro Board](https://miro.com/app/board/uXjVISX8ekk=/?share_link_id=111381371380)
 - **Telegram bot link to start**: [Telegram bot](https://t.me/YodOlbot)
 
 ---

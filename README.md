@@ -91,7 +91,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - **Architecture Diagram**: [Miro Board](https://miro.com/app/board/uXjVISX8ekk=/)
+- **Telegram bot link to start**: [Telegram bot](https://t.me/YodOlbot)
 
 ---
-
-Made with ❤️ by the Yodol development team

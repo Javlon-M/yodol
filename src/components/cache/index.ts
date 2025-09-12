@@ -57,7 +57,7 @@ export class CacheImpl implements Infrastructure.Cache {
     }
 
     public async get(field: string): Promise<string> {
-        return await this.getClient().get(this.getKeyWithPrefix(field))
+        return await this.getClient().get(this.getKeyWithPrefix(field)) as string 
     }
 
     public async has(field: string): Promise<boolean> {

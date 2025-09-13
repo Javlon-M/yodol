@@ -43,7 +43,6 @@ export class UserController implements BotController {
             userId: result.user.getId().toString(),
         });
 
-        console.log("///working!", ctx.chat.id)
         await ctx.reply(
             `What's up ${result.user.getName()}!\n Please provide your phone to continue register...`,
             Markup.keyboard([Markup.button.contactRequest("📱 Share contact")])
@@ -69,7 +68,6 @@ export class UserController implements BotController {
 
             return;
         }
-        console.log("///working!", await this.sessionService.getSession(ctx.chat.id))
 
         const result = await this.updateUserUsecase.execute({
             id: (await this.sessionService.getSession(ctx.chat.id)).userId!,

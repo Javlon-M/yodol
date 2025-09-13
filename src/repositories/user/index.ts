@@ -25,14 +25,24 @@ export class UserRepositoryImpl implements UserRepository {
     ){}
 
     public async create(params: CreateParams): Promise<Domain.User> {
-        const user = await this.storage.getUsersCollection().insertOne({
-            phone: params.phone,
-            username: params.username,
-            name: params.name,
-            telegram_id: params.telegramId,
-            email: params.email,
-            created_at: params.createdAt
-        })
+        const user = await this.storage.getUsersCollection().findOneAndUpdate(
+            {
+                username: params.username,
+                name: params.name
+            },
+            {
+                phone: params.phone,
+                username: params.username,
+                name: params.name,
+                telegram_id: params.telegramId,
+                email: params.email,
+                created_at: params.createdAt
+            },
+            {
+                upsert: true,
+                returnDocument: "after"
+            }
+        )
 
         return this.toDomainEntity(user)
     }

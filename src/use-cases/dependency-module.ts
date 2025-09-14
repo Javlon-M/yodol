@@ -48,6 +48,9 @@ export const UseCaseContainerModule = new ContainerModule((bind: interfaces.Bind
     bind<Usecases.GetOneUserUseCase>(UseCaseSymbols.GetOneUserUseCase)
     .to(Usecases.GetOneUserUseCaseImpl).inSingletonScope()
 
+    bind<Usecases.GetOneUserByTelegramIdUseCase>(UseCaseSymbols.GetOneUserByTelegramIdUseCase)
+    .to(Usecases.GetOneUserByTelegramIdUseCaseImpl).inSingletonScope()
+
     // Attendance 
     bind<Usecases.MarkUserSubmissionUseCase>(UseCaseSymbols.MarkUserSubmissionUseCase)
     .to(Usecases.MarkUserSubmissionUseCaseImpl).inSingletonScope()

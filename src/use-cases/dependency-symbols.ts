@@ -17,6 +17,7 @@ export const UseCaseSymbols = {
     CreateUserUseCase: Symbol("CreateUserUseCase"),
     UpdateUserUseCase: Symbol("UpdateUserUseCase"),
     GetOneUserUseCase: Symbol("GetOneUserUseCase"),
+    GetOneUserByTelegramIdUseCase: Symbol("GetOneUserByTelegramIdUseCase"),
 
     // Attendance
     MarkUserSubmissionUseCase: Symbol("MarkUserSubmissionUseCase"),

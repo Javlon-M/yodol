@@ -75,7 +75,6 @@ export class UserController implements BotController {
             phone: contact.phone_number,
         });
 
-        console.log("///working!")
         await ctx.reply(
             `Thank you for completing registration ${result.user.getName()}`,
         );

@@ -57,5 +57,8 @@ export const MESSAGES = {
         ADD_MENU: '➕ What would you like to add?',
         WHAT_TO_DO_NEXT: 'What would you like to do next?',
         WHAT_TO_DO: 'What would you like to do?',
-    }
+
+        //common
+        GLOBAL_ERROR: "⚠️ Oops, something went wrong. Please try again later.",
+    },
 }

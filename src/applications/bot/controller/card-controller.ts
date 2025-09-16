@@ -29,7 +29,7 @@ export class CardController implements BotController {
 
 
     public register(bot: Telegraf): void {
-        bot.hears(BUTTONS[this.lang].NEW_DECK, (ctx) => {
+        bot.hears(BUTTONS[this.lang].NEW_CARD, (ctx) => {
           this.addCard(ctx);
         });
         bot.hears(BUTTONS[this.lang].EDIT_FRONT, (ctx) => {

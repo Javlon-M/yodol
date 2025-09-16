@@ -25,6 +25,9 @@ export class MainController implements BotController {
         bot.hears(BUTTONS[this.lang].BACK_TO_MAIN, (ctx) => {
             this.goToMainMenu(ctx);
         });
+        bot.hears(BUTTONS[this.lang].CANCEL, (ctx) => {
+            this.goToMainMenu(ctx);
+        });
         bot.hears(BUTTONS[this.lang].ADD, (ctx) => {
             this.getAddActions(ctx);
         });

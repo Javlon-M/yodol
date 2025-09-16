@@ -18,9 +18,9 @@ export class NoteFactoryImpl implements NoteFactory {
 
     public construct(params: Params): Domain.Note {
         return new Domain.Note(
-            this.identifierFactory.construct(params.id.toHexString()),
-            this.identifierFactory.construct(params.cardId.toHexString()),
-            this.identifierFactory.construct(params.deckId.toHexString()),
+            this.identifierFactory.construct(params.id.toString()),
+            this.identifierFactory.construct(params.cardId.toString()),
+            this.identifierFactory.construct(params.deckId.toString()),
             params.createdAt,
             params.front,
             params.back

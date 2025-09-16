@@ -22,9 +22,9 @@ export const MESSAGES = {
         ACTIVE_GAME_NOT_FOUND: '❌ Faol o\'yin topilmadi!',
         
         // Success Messages
-        DECK_CREATED: '✅ Deck "{name}" created successfully!',
+        DECK_CREATED: '✅ Deck created successfully!',
         CARD_CREATED: '✅ Card created successfully!',
-        DECK_RENAMED: '✅ Deck renamed to "{name}" successfully!',
+        DECK_RENAMED: '✅ Deck renamed successfully!',
         DECK_DELETED: '✅ Deck and all its cards have been deleted successfully!',
         CARD_UPDATED: '✅ Card updated successfully!',
         CARD_DELETED: '✅ Card deleted successfully!',

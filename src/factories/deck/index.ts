@@ -18,7 +18,7 @@ export class DeckFactoryImpl implements DeckFactory {
 
     public construct(params: Params): Domain.Deck {
         return new Domain.Deck(
-            this.identifierFactory.construct(params.id.toHexString()),
+            this.identifierFactory.construct(params.id.toString()),
             params.userId,
             params.title,
             params.active,

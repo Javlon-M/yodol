@@ -6,6 +6,7 @@ import { MESSAGES } from "../constants/message.constant";
 import { BotServiceSymbols } from "../services/dependency-symbols";
 import { MenuButtonService } from "../services/menu-button";
 import { SessionService } from "../services/session";
+import { StepService } from "../services/step";
 
 @injectable()
 export class MainController implements BotController {
@@ -16,6 +17,8 @@ export class MainController implements BotController {
         private menuButtonService: MenuButtonService,
         @inject(BotServiceSymbols.Session)
         private sessionService: SessionService,
+        @inject(BotServiceSymbols.Step)
+        private stepService: StepService,
     ) {}
 
     register(bot: Telegraf): void {
@@ -31,6 +34,12 @@ export class MainController implements BotController {
         bot.hears(BUTTONS[this.lang].ADD, (ctx) => {
             this.getAddActions(ctx);
         });
+        
+        // It must implement last
+        bot.on('text', (ctx) => {
+            const text = ctx.message.text;
+            this.stepService.handleStep(ctx, text);
+        })
     }
 
     public async getMoreMenu(ctx: Context) {

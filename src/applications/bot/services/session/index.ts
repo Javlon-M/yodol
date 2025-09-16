@@ -17,7 +17,6 @@ export class SessionServiceImpl implements SessionService {
 
     public async getSession(telegramId: number): Promise<SessionData | null> {
         const session = await this.cache.get(telegramId.toString());
-
         return session ? this.toSession(session) : null;
     }
 

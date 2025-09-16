@@ -14,6 +14,7 @@ export interface UserRepository {
     remove(params: RemoveParams): Promise<Domain.User>
     update(params: UpdateParams): Promise<Domain.User>
     findById(id: Domain.Identifier): Promise<Domain.User>
+    findByTelegramId(telegramId: number): Promise<Domain.User>
 }
 
 @Inversify.injectable()
@@ -75,6 +76,14 @@ export class UserRepositoryImpl implements UserRepository {
         })
 
         return this.toDomainEntity(user)
+    }
+
+    public async findByTelegramId(telegramId: number): Promise<Domain.User> {
+        const user = await this.storage.getUsersCollection().findOne<Models.UserDocument>({
+            telegram_id: telegramId
+        })
+
+        return this.toDomainEntity(user);
     }
 
     private toDomainEntity(user: Models.UserDocument): Domain.User {

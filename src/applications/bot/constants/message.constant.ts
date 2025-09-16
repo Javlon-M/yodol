@@ -22,9 +22,9 @@ export const MESSAGES = {
         ACTIVE_GAME_NOT_FOUND: '❌ Faol o\'yin topilmadi!',
         
         // Success Messages
-        DECK_CREATED: '✅ Deck "{name}" created successfully!',
+        DECK_CREATED: '✅ Deck created successfully!',
         CARD_CREATED: '✅ Card created successfully!',
-        DECK_RENAMED: '✅ Deck renamed to "{name}" successfully!',
+        DECK_RENAMED: '✅ Deck renamed successfully!',
         DECK_DELETED: '✅ Deck and all its cards have been deleted successfully!',
         CARD_UPDATED: '✅ Card updated successfully!',
         CARD_DELETED: '✅ Card deleted successfully!',
@@ -57,6 +57,8 @@ export const MESSAGES = {
         ADD_MENU: '➕ What would you like to add?',
         WHAT_TO_DO_NEXT: 'What would you like to do next?',
         WHAT_TO_DO: 'What would you like to do?',
+        MORE_OPTIONS: '📖 More options:\nPlease choose one of the additional actions:',
+        BACK_TO_MAIN: '🏠 Returned to the main menu.',
 
         //common
         GLOBAL_ERROR: "⚠️ Oops, something went wrong. Please try again later.",

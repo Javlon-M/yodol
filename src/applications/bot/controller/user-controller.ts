@@ -6,6 +6,7 @@ import type { BotController } from ".";
 import type { CreateUserUseCase, UpdateUserUseCase } from "app/use-cases";
 import type { Update, Message } from "telegraf/types";
 import type { SessionService } from "../services/session";
+import { MenuButtonService } from "../services/menu-button";
 
 @injectable()
 export class UserController implements BotController {
@@ -19,6 +20,8 @@ export class UserController implements BotController {
         private createUserUsecase: CreateUserUseCase,
         @inject(UseCaseSymbols.UpdateUserUseCase)
         private updateUserUsecase: UpdateUserUseCase,
+        @inject(BotServiceSymbols.MenuButton)
+        private menuButtonService: MenuButtonService,
     ) {}
 
     public register(bot: Telegraf): void {
@@ -77,6 +80,7 @@ export class UserController implements BotController {
 
         await ctx.reply(
             `Thank you for completing registration ${result.user.getName()}`,
+            this.menuButtonService.getMainMenuKeyboard(),
         );
     }
 }

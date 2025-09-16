@@ -6,6 +6,7 @@ export const BUTTONS = {
         BROWSE: '🔍 Browse',
         STATS: '📊 Stats',
         ACCOUNT: '👤 Account',
+        MORE: '🔍 More',
         PLAY_GAME: '🚀 O\'yinni Boshlash',
         
         // Add Menu

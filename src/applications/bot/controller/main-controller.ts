@@ -5,6 +5,7 @@ import { BUTTONS } from "../constants/button.constant";
 import { MESSAGES } from "../constants/message.constant";
 import { BotServiceSymbols } from "../services/dependency-symbols";
 import { MenuButtonService } from "../services/menu-button";
+import { SessionService } from "../services/session";
 
 @injectable()
 export class MainController implements BotController {
@@ -13,11 +14,16 @@ export class MainController implements BotController {
     constructor(
         @inject(BotServiceSymbols.MenuButton)
         private menuButtonService: MenuButtonService,
+        @inject(BotServiceSymbols.Session)
+        private sessionService: SessionService,
     ) {}
 
     register(bot: Telegraf): void {
         bot.hears(BUTTONS[this.lang].MORE, (ctx) => {
             this.getMoreMenu(ctx);
+        });
+        bot.hears(BUTTONS[this.lang].BACK_TO_MAIN, (ctx) => {
+            this.goToMainMenu(ctx);
         });
     }
 
@@ -27,4 +33,15 @@ export class MainController implements BotController {
             this.menuButtonService.getMoreMenuKeyboard(),
         );
     }
+
+    public async goToMainMenu(ctx: Context): Promise<void> {
+        const telegramId = ctx.from!.id;
+        this.sessionService.clearSession(telegramId);
+
+        await ctx.reply(
+            MESSAGES[this.lang].BACK_TO_MAIN,
+            this.menuButtonService.getMainMenuKeyboard()
+        );
+    }
+
 }

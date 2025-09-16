@@ -57,6 +57,7 @@ export const MESSAGES = {
         ADD_MENU: '➕ What would you like to add?',
         WHAT_TO_DO_NEXT: 'What would you like to do next?',
         WHAT_TO_DO: 'What would you like to do?',
-        MORE_OPTIONS: '📖 More options:\nPlease choose one of the additional actions:'
+        MORE_OPTIONS: '📖 More options:\nPlease choose one of the additional actions:',
+        BACK_TO_MAIN: '🏠 Returned to the main menu.',
     }
 }

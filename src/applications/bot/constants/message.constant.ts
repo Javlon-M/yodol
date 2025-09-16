@@ -59,5 +59,8 @@ export const MESSAGES = {
         WHAT_TO_DO: 'What would you like to do?',
         MORE_OPTIONS: '📖 More options:\nPlease choose one of the additional actions:',
         BACK_TO_MAIN: '🏠 Returned to the main menu.',
-    }
+
+        //common
+        GLOBAL_ERROR: "⚠️ Oops, something went wrong. Please try again later.",
+    },
 }

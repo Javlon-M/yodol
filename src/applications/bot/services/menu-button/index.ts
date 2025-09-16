@@ -16,6 +16,7 @@ export class MenuButtonService {
     getMoreMenuKeyboard() {
       return Markup.keyboard([
         [BUTTONS[this.lang].ACCOUNT, BUTTONS[this.lang].STATS, BUTTONS[this.lang].BROWSE],
+        [BUTTONS[this.lang].BACK_TO_MAIN],
       ]).resize();
     }
     

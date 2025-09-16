@@ -1,7 +1,7 @@
 import { Context, Markup, Telegraf } from "telegraf";
 import { BotController } from ".";
 import { BUTTONS } from "../constants/button.constant";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { BotServiceSymbols } from "../services/dependency-symbols";
 import { SessionService } from "../services/session";
 import { MenuButtonService } from "../services/menu-button";
@@ -10,7 +10,8 @@ import { CreateCardUseCase, DeleteCardUseCase, GetOneUserByTelegramIdUseCase } f
 import { MESSAGES } from "../constants/message.constant";
 import { SessionStep } from "../services/session/session";
 
-export class DeckController implements BotController {
+injectable()
+export class CardController implements BotController {
     public lang: keyof typeof BUTTONS = 'en';
 
     constructor(

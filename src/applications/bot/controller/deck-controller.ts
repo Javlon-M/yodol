@@ -3,13 +3,14 @@ import { BotController } from ".";
 import { BUTTONS } from "../constants/button.constant";
 import { SessionService } from "../services/session";
 import { BotServiceSymbols } from "../services/dependency-symbols";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { SessionStep } from "../services/session/session";
 import { MESSAGES } from "../constants/message.constant";
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
 import { RemoveDeckUseCase } from "app/use-cases";
 import { MenuButtonService } from "../services/menu-button";
 
+injectable()
 export class DeckController implements BotController {
     public lang: keyof typeof BUTTONS = 'en';
 

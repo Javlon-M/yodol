@@ -30,7 +30,7 @@ export class CardController implements BotController {
 
     public register(bot: Telegraf): void {
         bot.hears(BUTTONS[this.lang].NEW_DECK, (ctx) => {
-            this.addCard(ctx);
+          this.addCard(ctx);
         });
         bot.hears(BUTTONS[this.lang].EDIT_FRONT, (ctx) => {
             this.startEditCardFront(ctx);
@@ -43,8 +43,8 @@ export class CardController implements BotController {
     public async addCard(ctx: Context) {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
-        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId: telegramId as unknown as string });
-    
+        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId: telegramId });
+
         if (!user || !session.editingDeck || !session.front || !session.back) {
           await ctx.reply(MESSAGES[this.lang].MISSING_INFO);
           return;

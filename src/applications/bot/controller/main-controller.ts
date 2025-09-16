@@ -25,6 +25,9 @@ export class MainController implements BotController {
         bot.hears(BUTTONS[this.lang].BACK_TO_MAIN, (ctx) => {
             this.goToMainMenu(ctx);
         });
+        bot.hears(BUTTONS[this.lang].ADD, (ctx) => {
+            this.getAddActions(ctx);
+        });
     }
 
     public async getMoreMenu(ctx: Context) {
@@ -43,5 +46,19 @@ export class MainController implements BotController {
             this.menuButtonService.getMainMenuKeyboard()
         );
     }
+
+    public async getAddActions(ctx: Context): Promise<void> {
+        const telegramId = ctx.from!.id;
+        this.sessionService.clearSession(telegramId);
+
+        await ctx.reply(
+            MESSAGES[this.lang].ADD_MENU,
+            Markup.keyboard([
+                [BUTTONS[this.lang].NEW_DECK, BUTTONS[this.lang].NEW_CARD],
+                [BUTTONS[this.lang].BACK_TO_MAIN]
+            ]).resize()
+        );
+    }
+
 
 }

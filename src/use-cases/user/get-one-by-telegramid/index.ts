@@ -20,7 +20,7 @@ export class GetOneUserByTelegramIdUseCaseImpl implements GetOneUserByTelegramId
     ) {}
 
     public async execute(params: Params): Promise<Response> {
-        const user = await this.userRepository.findById(this.identifierFactory.construct(params.telegramId))
+        const user = await this.userRepository.findByTelegramId(params.telegramId)
         if(!user) throw new Error(`User was not found. User id: ${params.telegramId}`)
 
         return {
@@ -30,7 +30,7 @@ export class GetOneUserByTelegramIdUseCaseImpl implements GetOneUserByTelegramId
 }
 
 interface Params {
-    telegramId: string
+    telegramId: number
 }
 
 interface Response {

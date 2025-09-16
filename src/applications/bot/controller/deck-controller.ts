@@ -7,7 +7,7 @@ import { inject, injectable } from "inversify";
 import { SessionStep } from "../services/session/session";
 import { MESSAGES } from "../constants/message.constant";
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
-import { RemoveDeckUseCase } from "app/use-cases";
+import { GetDecksUseCase, GetOneUserByTelegramIdUseCase, RemoveDeckUseCase } from "app/use-cases";
 import { MenuButtonService } from "../services/menu-button";
 
 injectable()
@@ -21,6 +21,10 @@ export class DeckController implements BotController {
         private menuButtonService: MenuButtonService,
         @inject(UseCaseSymbols.RemoveDeckUseCase)
         private removeDeckUseCase: RemoveDeckUseCase,
+        @inject(UseCaseSymbols.GetDecksUseCase)
+        private getDecksUseCase: GetDecksUseCase,
+        @inject(UseCaseSymbols.GetOneUserByTelegramIdUseCase)
+        private getOneUserByTelegramIdUseCase: GetOneUserByTelegramIdUseCase,
     ) {}
 
     register(bot: Telegraf): void {
@@ -32,6 +36,9 @@ export class DeckController implements BotController {
         });
         bot.hears(BUTTONS[this.lang].DELETE_DECK, (ctx) => {
             this.editDeck(ctx);
+        });
+        bot.hears(BUTTONS[this.lang].BROWSE, (ctx) => {
+            this.getDeckList(ctx);
         });
     }
 
@@ -45,6 +52,46 @@ export class DeckController implements BotController {
             MESSAGES[this.lang].ENTER_DECK_NAME,
             Markup.keyboard([[BUTTONS[this.lang].CANCEL]]).resize(),
         );
+    }
+
+    async getDeckList(ctx: Context) {
+        const telegramId = ctx.from!.id;
+
+        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId })
+
+        const decks = await this.getDecksUseCase.execute({ userId: user.user.getId().toString() })
+
+        this.sessionService.clearSession(telegramId);
+      
+        if (decks.decks.length === 0) {
+          await ctx.reply(
+            MESSAGES[this.lang].NO_DECKS,
+            this.menuButtonService.getMainMenuKeyboard()
+          );
+          return;
+        }
+      
+        // Deck tugmalarini yaratish
+        const deckButtons: string[][] = [];
+        let message = MESSAGES[this.lang].AVAILABLE_DECKS;
+      
+        // Har bir deck uchun ma'lumot va tugma yaratish
+        for (let i = 0; i < decks.decks.length; i++) {
+          const deck = decks.decks[i];
+          
+          message += `${i + 1}. 📂 ${deck.getTitle()}\n`;
+          
+          deckButtons.push([`📂 ${deck.getTitle()}`]);
+        }
+
+        deckButtons.push([BUTTONS[this.lang].BACK_TO_MAIN]);
+
+        await ctx.reply(
+          message + MESSAGES[this.lang].DECKS,
+          Markup.keyboard(deckButtons).resize()
+        );
+
+        this.sessionService.updateSession(telegramId, { step: SessionStep.BROWSING_DECKS });
     }
 
     async editDeck(ctx: Context) {

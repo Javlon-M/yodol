@@ -21,7 +21,17 @@ export class SessionServiceImpl implements SessionService {
     }
 
     public async clearSession(key: number): Promise<void> {
-        return this.cache.remove(key.toString());
+    const session = await this.getSession(key);
+
+    if (session?.userId) {
+        await this.cache.set(
+            key.toString(),
+            this.toStorage({ userId: session.userId } as SessionData),
+        );
+    } else {
+        await this.cache.remove(key.toString());
+    }
+
     }
 
     public async updateSession(
@@ -31,7 +41,7 @@ export class SessionServiceImpl implements SessionService {
         const session = (await this.getSession(key)) || {};
 
         Object.assign(session, data);
-        await this.cache.set(key.toString(), this.toStorage(session), 60 * 15);
+        await this.cache.set(key.toString(), this.toStorage(session));
     }
 
     private toSession(session: string): SessionData {

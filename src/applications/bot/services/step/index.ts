@@ -186,7 +186,7 @@ export class StepServiceImpl implements StepService {
             `Front: ${session.front}\n` +
             `Back: ${session.back || text}\n\n` +
             MESSAGES[this.lang].WHAT_TO_DO_NEXT,
-            this.menuButtonService.getAfterActionKeyboard()
+            this.menuButtonService.getAddMenuKeyboard()
           );
     
           this.sessionService.clearSession(telegramId);

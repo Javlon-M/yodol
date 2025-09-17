@@ -36,6 +36,7 @@ export class DeckController implements BotController {
             this.deleteDeck(ctx);
         });
         bot.hears(BUTTONS[this.lang].BROWSE, (ctx) => {
+          console.log('asd', ctx.from.id)
             this.getDeckList(ctx);
         });
         bot.hears(BUTTONS[this.lang].CONFIRM_DELETE, (ctx) => {
@@ -106,18 +107,12 @@ export class DeckController implements BotController {
     }
 
     async deleteDeck(ctx: Context) {
-        const telegramId = ctx.from!.id;
-    
         await ctx.reply(
             MESSAGES[this.lang].CONFIRM_DELETE_DECK,
           Markup.keyboard([
             [BUTTONS[this.lang].CONFIRM_DELETE, BUTTONS[this.lang].CANCEL],
           ]).resize(),
         );
-    
-        this.sessionService.updateSession(telegramId, {
-          step: SessionStep.CONFIRMING_DECK_DELETE,
-        });
     }
 
     async confirmDeleteDeck(ctx: Context): Promise<void> {

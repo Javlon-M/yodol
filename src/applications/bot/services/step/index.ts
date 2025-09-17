@@ -107,18 +107,17 @@ export class StepServiceImpl implements StepService {
     
         try {
           await this.createCardUseCase.execute({
-            
             deckId: session.editingDeck,
             note: {
                 front: session.front,
-                back: session.back
+                back: session.back || text
             }
           });
     
           await ctx.reply(
             MESSAGES[this.lang].CARD_CREATED +`\n\n` +
             `Front: ${session.front}\n` +
-            `Back: ${session.back}\n\n` +
+            `Back: ${session.back || text}\n\n` +
             MESSAGES[this.lang].WHAT_TO_DO_NEXT,
             this.menuButtonService.getAfterActionKeyboard()
           );

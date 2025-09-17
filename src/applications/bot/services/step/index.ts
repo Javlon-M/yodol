@@ -102,7 +102,7 @@ export class StepServiceImpl implements StepService {
             Markup.keyboard([
                 [BUTTONS[this.lang].RENAME_DECK, BUTTONS[this.lang].DELETE_DECK],
                 [BUTTONS[this.lang].VIEW_CARDS, BUTTONS[this.lang].ADD_CARD],
-                [MESSAGES[this.lang].BACK_TO_MAIN]
+                [BUTTONS[this.lang].BACK_TO_MAIN]
             ]).resize()
         );
     }

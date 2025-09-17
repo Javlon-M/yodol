@@ -6,7 +6,7 @@ import { BotServiceSymbols } from "../services/dependency-symbols";
 import { SessionService } from "../services/session";
 import { MenuButtonService } from "../services/menu-button";
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
-import { CreateCardUseCase, DeleteCardUseCase, GetDecksUseCase, GetOneUserByTelegramIdUseCase } from "app/use-cases";
+import { DeleteCardUseCase, GetDecksUseCase } from "app/use-cases";
 import { MESSAGES } from "../constants/message.constant";
 import { SessionStep } from "../services/session/session";
 
@@ -19,10 +19,6 @@ export class CardController implements BotController {
         private sessionService: SessionService,
         @inject(BotServiceSymbols.MenuButton)
         private menuButtonService: MenuButtonService,
-        @inject(UseCaseSymbols.CreateCardUseCase)
-        private createCardUseCase: CreateCardUseCase,
-        @inject(UseCaseSymbols.GetOneUserByTelegramIdUseCase)
-        private getOneUserByTelegramIdUseCase: GetOneUserByTelegramIdUseCase,
         @inject(UseCaseSymbols.DeleteCardUseCase)
         private DeleteCardUseCase: DeleteCardUseCase,
         @inject(UseCaseSymbols.GetDecksUseCase)
@@ -44,8 +40,9 @@ export class CardController implements BotController {
 
     public async addCard(ctx: Context) {
       const telegramId = ctx.from!.id;
-      const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId });
-      const decks = await this.getDecksUseCase.execute({ userId: user.user.getId().toString() })
+      const session = await this.sessionService.getSession(telegramId);
+      const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
+
 
       if (decks.decks.length === 0) {
         await ctx.reply(

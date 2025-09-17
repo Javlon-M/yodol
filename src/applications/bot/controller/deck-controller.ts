@@ -7,7 +7,7 @@ import { inject, injectable } from "inversify";
 import { SessionStep } from "../services/session/session";
 import { MESSAGES } from "../constants/message.constant";
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
-import { GetDecksUseCase, GetOneUserByTelegramIdUseCase, RemoveDeckUseCase } from "app/use-cases";
+import { GetDecksUseCase, RemoveDeckUseCase } from "app/use-cases";
 import { MenuButtonService } from "../services/menu-button";
 
 injectable()
@@ -23,8 +23,6 @@ export class DeckController implements BotController {
         private removeDeckUseCase: RemoveDeckUseCase,
         @inject(UseCaseSymbols.GetDecksUseCase)
         private getDecksUseCase: GetDecksUseCase,
-        @inject(UseCaseSymbols.GetOneUserByTelegramIdUseCase)
-        private getOneUserByTelegramIdUseCase: GetOneUserByTelegramIdUseCase,
     ) {}
 
     register(bot: Telegraf): void {
@@ -35,10 +33,13 @@ export class DeckController implements BotController {
             this.editDeck(ctx);
         });
         bot.hears(BUTTONS[this.lang].DELETE_DECK, (ctx) => {
-            this.editDeck(ctx);
+            this.deleteDeck(ctx);
         });
         bot.hears(BUTTONS[this.lang].BROWSE, (ctx) => {
             this.getDeckList(ctx);
+        });
+        bot.hears(BUTTONS[this.lang].CONFIRM_DELETE, (ctx) => {
+            this.confirmDeleteDeck(ctx);
         });
     }
 
@@ -56,10 +57,8 @@ export class DeckController implements BotController {
 
     async getDeckList(ctx: Context) {
         const telegramId = ctx.from!.id;
-
-        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId })
-
-        const decks = await this.getDecksUseCase.execute({ userId: user.user.getId().toString() })
+        const session = await this.sessionService.getSession(telegramId)
+        const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
 
         this.sessionService.clearSession(telegramId);
       

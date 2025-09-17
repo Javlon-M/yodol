@@ -3,7 +3,7 @@ import { Context, Markup } from "telegraf";
 
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
 import { BotServiceSymbols } from "../dependency-symbols";
-import { CreateCardUseCase, CreateDeckUseCase, GetDecksUseCase, GetOneUserByTelegramIdUseCase } from "app/use-cases";
+import { CreateCardUseCase, CreateDeckUseCase, EditDeckUseCase, GetDecksUseCase } from "app/use-cases";
 
 import { MenuButtonService } from "../menu-button";
 import { SessionService } from "../session";
@@ -22,8 +22,6 @@ export class StepServiceImpl implements StepService {
     constructor(
         @inject(BotServiceSymbols.Session)
         private readonly sessionService: SessionService,
-        @inject(UseCaseSymbols.GetOneUserByTelegramIdUseCase)
-        private readonly getOneUserByTelegramIdUseCase: GetOneUserByTelegramIdUseCase,
         @inject(UseCaseSymbols.CreateDeckUseCase)
         private readonly createDeckUseCase: CreateDeckUseCase,
         @inject(BotServiceSymbols.MenuButton)
@@ -32,6 +30,8 @@ export class StepServiceImpl implements StepService {
         private createCardUseCase: CreateCardUseCase,
         @inject(UseCaseSymbols.GetDecksUseCase)
         private getDecksUseCase: GetDecksUseCase,
+        @inject(UseCaseSymbols.EditDeckUseCase)
+        private editDeckUseCase: EditDeckUseCase,
     ) {}
 
     public async handleStep(ctx: Context, text: string) {
@@ -60,6 +60,15 @@ export class StepServiceImpl implements StepService {
                 this.sessionService.updateSession(telegramId, { back: text });
                 await this.addCard(ctx, text);
                 break;
+            case SessionStep.BROWSING_DECKS:
+                if (text.startsWith('📂 ')) {
+                    const deckName = text.substring(3);
+                    await this.handleBrowseDeck(ctx, deckName);
+                }
+                break;
+            case SessionStep.RENAMING_DECK:
+                await this.renameDeck(ctx, text);
+                break;
             default:
                 // Handle main menu and other button presses
                 // await this.handleButtonPress(ctx, text);
@@ -68,11 +77,42 @@ export class StepServiceImpl implements StepService {
 
     }
 
+    async handleBrowseDeck(ctx: Context, deckName: string): Promise<void> {
+        const telegramId = ctx.from!.id;
+        const session = await this.sessionService.getSession(telegramId)
+        const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
+
+        const deck = decks.decks.find(d => d.getTitle() === deckName);
+
+        if (!deck) {
+            await ctx.reply(MESSAGES[this.lang].DECK_NOT_FOUND)
+            return;
+        }
+
+        this.sessionService.updateSession(telegramId, { editingDeck: deck.getId().toString() });
+
+        await ctx.reply(
+            `📂 Deck: ${deck.getTitle()}\n\n` +
+            // `📊 Cards: ${stats.total}\n` +
+            // `🆕 New: ${stats.new}\n` +
+            // `📚 Learning: ${stats.learning}\n` +
+            // `🎯 Young: ${stats.young}\n` +
+            // `⭐ Mature: ${stats.mature}\n\n` +
+            `What would you like to do?`,
+            Markup.keyboard([
+                [BUTTONS[this.lang].RENAME_DECK, BUTTONS[this.lang].DELETE_DECK],
+                [BUTTONS[this.lang].VIEW_CARDS, BUTTONS[this.lang].ADD_CARD],
+                [MESSAGES[this.lang].BACK_TO_MAIN]
+            ]).resize()
+        );
+    }
+
+
     async createDeck(ctx: Context, name: string): Promise<void> {
       const telegramId = ctx.from!.id;
-      const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId });
-  
-      if (!user) {
+      const session = await this.sessionService.getSession(telegramId)
+
+      if (!session.userId) {
         await ctx.reply(MESSAGES[this.lang].USER_NOT_FOUND);
         return;
       }
@@ -80,7 +120,7 @@ export class StepServiceImpl implements StepService {
       try {
         await this.createDeckUseCase.execute({
             title: name,
-            userId: user.user.getId().toString(),
+            userId: session.userId.toString(),
         });
 
         await ctx.reply(
@@ -95,12 +135,39 @@ export class StepServiceImpl implements StepService {
       }
     }
 
+    async renameDeck(ctx: Context, newName: string): Promise<void> {
+        const telegramId = ctx.from!.id;
+        const session = await this.sessionService.getSession(telegramId);
+
+        if (!session.editingDeck) {
+            await ctx.reply(MESSAGES[this.lang].NO_DECK_SELECTED);
+            return;
+        }
+
+        try {
+            await this.editDeckUseCase.execute({
+                deckId: session.editingDeck,
+                title: newName
+            });
+
+            await ctx.reply(
+                MESSAGES[this.lang].DECK_RENAMED,
+                this.menuButtonService.getMainMenuKeyboard()
+            );
+
+            this.sessionService.clearSession(telegramId);
+
+        } catch (error) {
+            await ctx.reply(MESSAGES[this.lang].ERROR_GENERIC);
+        }
+    }
+
+
     public async addCard(ctx: Context, text: string) {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
-        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId: telegramId });
 
-        if (!user.user || !session.editingDeck || !session.front || !(session.back || text)) {
+        if (!session.userId || !session.editingDeck || !session.front || !(session.back || text)) {
           await ctx.reply(MESSAGES[this.lang].MISSING_INFO);
           return;
         }
@@ -130,8 +197,8 @@ export class StepServiceImpl implements StepService {
 
     async selectDeckForCard(ctx: Context, deckName: string): Promise<void> {
         const telegramId = ctx.from!.id;
-        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId });
-        const decks = await this.getDecksUseCase.execute({ userId: user.user.getId().toString() })
+        const session = await this.sessionService.getSession(telegramId)
+        const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
 
         const deck = (decks.decks.filter(d => d.getTitle() == deckName))[0];
         if (!deck) {

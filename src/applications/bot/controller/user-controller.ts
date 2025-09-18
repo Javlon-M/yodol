@@ -25,7 +25,7 @@ export class UserController implements BotController {
     ) {}
 
     public register(bot: Telegraf): void {
-        bot.command("user_register", (ctx) => {
+        bot.command("start", (ctx) => {
             this.userRegister(ctx);
         });
         bot.on("contact", (ctx) => {

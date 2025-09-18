@@ -6,7 +6,7 @@ import { BotServiceSymbols } from "../services/dependency-symbols";
 import { SessionService } from "../services/session";
 import { MenuButtonService } from "../services/menu-button";
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
-import { CreateCardUseCase, DeleteCardUseCase, GetOneUserByTelegramIdUseCase } from "app/use-cases";
+import { DeleteCardUseCase, GetDecksUseCase } from "app/use-cases";
 import { MESSAGES } from "../constants/message.constant";
 import { SessionStep } from "../services/session/session";
 
@@ -19,18 +19,16 @@ export class CardController implements BotController {
         private sessionService: SessionService,
         @inject(BotServiceSymbols.MenuButton)
         private menuButtonService: MenuButtonService,
-        @inject(UseCaseSymbols.CreateCardUseCase)
-        private createCardUseCase: CreateCardUseCase,
-        @inject(UseCaseSymbols.GetOneUserByTelegramIdUseCase)
-        private getOneUserByTelegramIdUseCase: GetOneUserByTelegramIdUseCase,
         @inject(UseCaseSymbols.DeleteCardUseCase)
         private DeleteCardUseCase: DeleteCardUseCase,
+        @inject(UseCaseSymbols.GetDecksUseCase)
+        private getDecksUseCase: GetDecksUseCase,
     ) {}
 
 
     public register(bot: Telegraf): void {
         bot.hears(BUTTONS[this.lang].NEW_CARD, (ctx) => {
-          this.addCard(ctx);
+          this.handleAddCard(ctx);
         });
         bot.hears(BUTTONS[this.lang].EDIT_FRONT, (ctx) => {
             this.startEditCardFront(ctx);
@@ -38,40 +36,34 @@ export class CardController implements BotController {
         bot.hears(BUTTONS[this.lang].EDIT_BACK, (ctx) => {
             this.startEditCardBack(ctx);
         });
+        bot.hears(BUTTONS[this.lang].DELETE_CARD, (ctx) => {
+            this.handleDeleteCard(ctx);
+        });
     }
 
-    public async addCard(ctx: Context) {
-        const telegramId = ctx.from!.id;
-        const session = await this.sessionService.getSession(telegramId);
-        const user = await this.getOneUserByTelegramIdUseCase.execute({ telegramId: telegramId });
+    public async handleAddCard(ctx: Context) {
+      const telegramId = ctx.from!.id;
+      const session = await this.sessionService.getSession(telegramId);
+      const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
 
-        if (!user || !session.editingDeck || !session.front || !session.back) {
-          await ctx.reply(MESSAGES[this.lang].MISSING_INFO);
-          return;
-        }
-    
-        try {
-          await this.createCardUseCase.execute({
-            
-            deckId: session.editingDeck,
-            note: {
-                front: session.front,
-                back: session.back
-            }
-          });
-    
-          await ctx.reply(
-            MESSAGES[this.lang].CARD_CREATED +`\n\n` +
-            `Front: ${session.front}\n` +
-            `Back: ${session.back}\n\n` +
-            MESSAGES[this.lang].WHAT_TO_DO_NEXT,
-            this.menuButtonService.getAfterActionKeyboard()
-          );
-    
-          this.sessionService.clearSession(telegramId);
-        } catch (error) {
-          await ctx.reply(MESSAGES[this.lang].ERROR_CREATING_CARD);
-        }
+
+      if (decks.decks.length === 0) {
+        await ctx.reply(
+          MESSAGES[this.lang].NO_DECKS,
+          Markup.keyboard([[BUTTONS[this.lang].NEW_DECK], [BUTTONS[this.lang].BACK_TO_MAIN]]).resize()
+        );
+        return;
+      }
+
+      const deckButtons = decks.decks.map(deck => [`📚 ${deck.getTitle()}`]);
+      deckButtons.push([BUTTONS[this.lang].CANCEL]);
+
+      await ctx.reply(
+        MESSAGES[this.lang].SELECT_DECK,
+        Markup.keyboard(deckButtons).resize()
+      );
+
+      this.sessionService.updateSession(telegramId, { step: SessionStep.SELECTING_DECK_FOR_CARD });
     }
 
     public async startEditCardFront(ctx: Context): Promise<void> {
@@ -84,7 +76,7 @@ export class CardController implements BotController {
         );
     }
 
-    async startEditCardBack(ctx: Context): Promise<void> {
+    public async startEditCardBack(ctx: Context): Promise<void> {
         const telegramId = ctx.from!.id;
         this.sessionService.updateSession(telegramId, { step: SessionStep.EDITING_CARD_BACK });
     
@@ -94,7 +86,7 @@ export class CardController implements BotController {
         );
     }
 
-    async deleteCard(ctx: Context): Promise<void> {
+    public async handleDeleteCard(ctx: Context): Promise<void> {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
     
@@ -118,6 +110,6 @@ export class CardController implements BotController {
         } catch (error) {
           await ctx.reply(MESSAGES[this.lang].ERROR_GENERIC);
         }
-      }
+    }
     
 }

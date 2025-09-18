@@ -51,6 +51,8 @@ export const MESSAGES = {
         CONFIRM_DELETE_DECK: '⚠️ Are you sure you want to delete this deck?\nThis will permanently delete all cards in it!',
         NO_CARDS: '📭 This deck has no cards yet!\nAdd some cards to get started.',
         CARDS_IN_DECK: '📋 Cards in this deck:\n\n',
+        DECKS: '📋 Choose deck for brose:\n\n',
+        AVAILABLE_DECKS: '🔍 Available decks:\n\n',
         
         // Menu Titles
         BROWSE_DECKS: '🔍 Browse Decks:\nSelect a deck to manage:',

@@ -3,7 +3,7 @@ export interface Cache {
 
     close(): Promise<void>
 
-    set(field: string, value: string, expireInSeconds: number): Promise<void>
+    set(field: string, value: string, expireInSeconds?: number): Promise<void>
 
     get(field: string): Promise<string>
 

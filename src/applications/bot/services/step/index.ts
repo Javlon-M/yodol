@@ -40,12 +40,12 @@ export class StepServiceImpl implements StepService {
 
            switch (session.step) {
             case SessionStep.AWAITING_DECK_NAME:
-                await this.createDeck(ctx, text);
+                await this.processCreateDeck(ctx, text);
                 break;
             case SessionStep.SELECTING_DECK_FOR_CARD:
                 if (text.startsWith('📚 ')) {
                     const deckName = text.substring(3);
-                    await this.selectDeckForCard(ctx, deckName);
+                    await this.processSelectDeckForCard(ctx, deckName);
                 }
                 break;
             case SessionStep.AWAITING_CARD_FRONT:
@@ -58,16 +58,16 @@ export class StepServiceImpl implements StepService {
                 break;
             case SessionStep.AWAITING_CARD_BACK:
                 this.sessionService.updateSession(telegramId, { back: text });
-                await this.addCard(ctx, text);
+                await this.processAddCard(ctx, text);
                 break;
             case SessionStep.BROWSING_DECKS:
                 if (text.startsWith('📂 ')) {
                     const deckName = text.substring(3);
-                    await this.handleBrowseDeck(ctx, deckName);
+                    await this.processBrowseDeck(ctx, deckName);
                 }
                 break;
             case SessionStep.RENAMING_DECK:
-                await this.renameDeck(ctx, text);
+                await this.processRenameDeck(ctx, text);
                 break;
             default:
                 // Handle main menu and other button presses
@@ -77,7 +77,7 @@ export class StepServiceImpl implements StepService {
 
     }
 
-    async handleBrowseDeck(ctx: Context, deckName: string): Promise<void> {
+    public async processBrowseDeck(ctx: Context, deckName: string): Promise<void> {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId)
         const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
@@ -108,7 +108,7 @@ export class StepServiceImpl implements StepService {
     }
 
 
-    async createDeck(ctx: Context, name: string): Promise<void> {
+    public async processCreateDeck(ctx: Context, name: string): Promise<void> {
       const telegramId = ctx.from!.id;
       const session = await this.sessionService.getSession(telegramId)
 
@@ -135,7 +135,7 @@ export class StepServiceImpl implements StepService {
       }
     }
 
-    async renameDeck(ctx: Context, newName: string): Promise<void> {
+    public async processRenameDeck(ctx: Context, newName: string): Promise<void> {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
 
@@ -163,7 +163,7 @@ export class StepServiceImpl implements StepService {
     }
 
 
-    public async addCard(ctx: Context, text: string) {
+    public async processAddCard(ctx: Context, text: string) {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
 
@@ -195,7 +195,7 @@ export class StepServiceImpl implements StepService {
         }
     }
 
-    async selectDeckForCard(ctx: Context, deckName: string): Promise<void> {
+    public async processSelectDeckForCard(ctx: Context, deckName: string): Promise<void> {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId)
         const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })

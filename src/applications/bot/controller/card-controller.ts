@@ -28,7 +28,7 @@ export class CardController implements BotController {
 
     public register(bot: Telegraf): void {
         bot.hears(BUTTONS[this.lang].NEW_CARD, (ctx) => {
-          this.addCard(ctx);
+          this.handleAddCard(ctx);
         });
         bot.hears(BUTTONS[this.lang].EDIT_FRONT, (ctx) => {
             this.startEditCardFront(ctx);
@@ -36,9 +36,12 @@ export class CardController implements BotController {
         bot.hears(BUTTONS[this.lang].EDIT_BACK, (ctx) => {
             this.startEditCardBack(ctx);
         });
+        bot.hears(BUTTONS[this.lang].DELETE_CARD, (ctx) => {
+            this.handleDeleteCard(ctx);
+        });
     }
 
-    public async addCard(ctx: Context) {
+    public async handleAddCard(ctx: Context) {
       const telegramId = ctx.from!.id;
       const session = await this.sessionService.getSession(telegramId);
       const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
@@ -73,7 +76,7 @@ export class CardController implements BotController {
         );
     }
 
-    async startEditCardBack(ctx: Context): Promise<void> {
+    public async startEditCardBack(ctx: Context): Promise<void> {
         const telegramId = ctx.from!.id;
         this.sessionService.updateSession(telegramId, { step: SessionStep.EDITING_CARD_BACK });
     
@@ -83,7 +86,7 @@ export class CardController implements BotController {
         );
     }
 
-    async deleteCard(ctx: Context): Promise<void> {
+    public async handleDeleteCard(ctx: Context): Promise<void> {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
     
@@ -107,6 +110,6 @@ export class CardController implements BotController {
         } catch (error) {
           await ctx.reply(MESSAGES[this.lang].ERROR_GENERIC);
         }
-      }
+    }
     
 }

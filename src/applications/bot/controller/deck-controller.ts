@@ -27,24 +27,24 @@ export class DeckController implements BotController {
 
     register(bot: Telegraf): void {
         bot.hears(BUTTONS[this.lang].NEW_DECK, (ctx) => {
-            this.addDeck(ctx);
+            this.handleNewDeck(ctx);
         });
         bot.hears(BUTTONS[this.lang].RENAME_DECK, (ctx) => {
-            this.editDeck(ctx);
+            this.handleEditDeck(ctx);
         });
         bot.hears(BUTTONS[this.lang].DELETE_DECK, (ctx) => {
-            this.deleteDeck(ctx);
+            this.handleDeleteDeck(ctx);
         });
         bot.hears(BUTTONS[this.lang].BROWSE, (ctx) => {
           console.log('asd', ctx.from.id)
-            this.getDeckList(ctx);
+            this.handleBrowseDecks(ctx);
         });
         bot.hears(BUTTONS[this.lang].CONFIRM_DELETE, (ctx) => {
-            this.confirmDeleteDeck(ctx);
+            this.handleConfirmDeleteDeck(ctx);
         });
     }
 
-    async addDeck(ctx: Context) {
+    async handleNewDeck(ctx: Context) {
         const telegramId = ctx.from!.id;
         this.sessionService.updateSession(telegramId, {
           step: SessionStep.AWAITING_DECK_NAME,
@@ -56,7 +56,7 @@ export class DeckController implements BotController {
         );
     }
 
-    async getDeckList(ctx: Context) {
+    async handleBrowseDecks(ctx: Context) {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId)
         const decks = await this.getDecksUseCase.execute({ userId: session.userId.toString() })
@@ -94,7 +94,7 @@ export class DeckController implements BotController {
         this.sessionService.updateSession(telegramId, { step: SessionStep.BROWSING_DECKS });
     }
 
-    async editDeck(ctx: Context) {
+    async handleEditDeck(ctx: Context) {
         const telegramId = ctx.from!.id;
         this.sessionService.updateSession(telegramId, {
           step: SessionStep.RENAMING_DECK,
@@ -106,7 +106,7 @@ export class DeckController implements BotController {
         );
     }
 
-    async deleteDeck(ctx: Context) {
+    async handleDeleteDeck(ctx: Context) {
         await ctx.reply(
             MESSAGES[this.lang].CONFIRM_DELETE_DECK,
           Markup.keyboard([
@@ -115,7 +115,7 @@ export class DeckController implements BotController {
         );
     }
 
-    async confirmDeleteDeck(ctx: Context): Promise<void> {
+    async handleConfirmDeleteDeck(ctx: Context): Promise<void> {
         const telegramId = ctx.from!.id;
         const session = await this.sessionService.getSession(telegramId);
   

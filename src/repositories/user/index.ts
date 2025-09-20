@@ -90,7 +90,7 @@ export class UserRepositoryImpl implements UserRepository {
         if (!user) return null
 
         return this.userFactory.construct({
-            id: this.identifierFactory.construct(user.id),
+            id: this.identifierFactory.construct(user._id as any),
             phone: user.phone,
             username: user.username,
             name: user.name,

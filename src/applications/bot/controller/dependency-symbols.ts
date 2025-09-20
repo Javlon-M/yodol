@@ -4,4 +4,5 @@ export const BotControllerSymbols = {
     Card: Symbol.for("CardController"),
     Deck: Symbol.for("DeckController"),
     Main: Symbol.for("MainController"),
+    Stats: Symbol.for("StatsController"),
 };

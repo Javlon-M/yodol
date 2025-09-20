@@ -65,7 +65,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     public async findByUserId(userId: string, options: Options): Promise<Domain.Attendance[]> {
         const attendances = await this.storage.getAttendancesCollection().find<Models.AttendanceDocument>({
             user_id: userId,
-        }, options)
+        }).skip(options.skip).limit(options.limit).sort(options.sort)
 
         return attendances.map(this.toDomainEntity.bind(this))
     }
@@ -106,6 +106,6 @@ interface FindOneParams {
 
 interface Options {
     limit: number, 
-    sort: number, 
+    sort: string, 
     skip: number
 }

@@ -3,7 +3,11 @@ import { inject, injectable } from "inversify";
 import { UseCaseSymbols } from "app/use-cases/dependency-symbols";
 import { BotServiceSymbols } from "../services/dependency-symbols";
 import type { BotController } from ".";
-import type { CreateUserUseCase, UpdateUserUseCase } from "app/use-cases";
+import type {
+    CreateUserUseCase,
+    MarkUserSubmissionUseCase,
+    UpdateUserUseCase,
+} from "app/use-cases";
 import type { Update, Message } from "telegraf/types";
 import type { SessionService } from "../services/session";
 import { MenuButtonService } from "../services/menu-button";
@@ -20,6 +24,8 @@ export class UserController implements BotController {
         private createUserUsecase: CreateUserUseCase,
         @inject(UseCaseSymbols.UpdateUserUseCase)
         private updateUserUsecase: UpdateUserUseCase,
+        @inject(UseCaseSymbols.MarkUserSubmissionUseCase)
+        private markUserSubmissionUseCase: MarkUserSubmissionUseCase,
         @inject(BotServiceSymbols.MenuButton)
         private menuButtonService: MenuButtonService,
     ) {}
@@ -38,11 +44,17 @@ export class UserController implements BotController {
             name: ctx.from.first_name,
             username: ctx.from.username!,
             phone: this.defaultPhone,
-            telegramId: ctx.chat.id.toString(),
+            telegramId: ctx.from.id.toString(),
             email: this.defaultEmail,
         });
 
-        await this.sessionService.updateSession(ctx.chat.id, {
+        console.log("userni olyapman", result);
+
+        await this.sessionService.updateSession(ctx.from.id, {
+            userId: result.user.getId().toString(),
+        });
+
+        await this.markUserSubmissionUseCase.execute({
             userId: result.user.getId().toString(),
         });
 
@@ -73,7 +85,7 @@ export class UserController implements BotController {
         }
 
         const result = await this.updateUserUsecase.execute({
-            id: (await this.sessionService.getSession(ctx.chat.id)).userId!,
+            id: (await this.sessionService.getSession(ctx.from.id)).userId!,
             telegramId: ctx.chat.id.toString(),
             phone: contact.phone_number,
         });

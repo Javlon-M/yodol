@@ -37,7 +37,7 @@ export class GetUserStatsUseCaseImpl implements GetUserStatsUseCase {
     private async getCalendar(params: Params): Promise<Domain.Attendance[]> {
         const options = {
             limit: 12,
-            sort: -1,
+            sort: "desc",
             skip: 0
         }
 
@@ -45,7 +45,7 @@ export class GetUserStatsUseCaseImpl implements GetUserStatsUseCase {
 
         if (params.skip) options.skip = params.skip
 
-        if (params.sort) options.sort = params.sort
+        if (params.sort) options.sort = params.sort ? "desc" : "asc"
 
         return await this.attendanceRepository.findByUserId(params.userId, options)
     }

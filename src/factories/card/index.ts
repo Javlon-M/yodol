@@ -18,8 +18,8 @@ export class CardFactoryImpl implements CardFactory {
 
     public construct(params: Params): Domain.Card {
         return new Domain.Card(
-            this.identifierFactory.construct(params.id.toHexString()),
-            this.identifierFactory.construct(params.deckId.toHexString()),
+            this.identifierFactory.construct(params.id.toString()),
+            this.identifierFactory.construct(params.deckId.toString()),
             params.createdAt,
             params.type,
             params.queue,

@@ -4,11 +4,14 @@ import { FactoryContainerModule } from "app/factories/dependency-module"
 import { RepositoryContainerModule } from "app/repositories/dependency-module"
 import { ComponentsContainerModule } from "app/components/dependency-module"
 import { UseCaseContainerModule } from "app/use-cases/dependency-module"
+import { BotServicesModule } from "app/applications/bot/services/dependency-module"
+import { BotControllerModule } from "app/applications/bot/controller/dependency-module"
 
 
 export interface Dependencies {
     load(): Promise<void>
     getItem<T>(symbol: symbol): T
+    getAll<T>(symbol: symbol): T[]
 }
 
 export class DependenciesImpl implements Dependencies {
@@ -32,9 +35,15 @@ export class DependenciesImpl implements Dependencies {
         this.container.load(FactoryContainerModule)
         this.container.load(RepositoryContainerModule)
         this.container.load(UseCaseContainerModule)
+        this.container.load(BotServicesModule)
+        this.container.load(BotControllerModule)
     }
 
     getItem<T>(symbol: symbol): T {
         return this.container.get<T>(symbol);
+    }
+
+    getAll<T>(symbol: symbol): T[] {
+        return this.container.getAll<T>(symbol)
     }
 }

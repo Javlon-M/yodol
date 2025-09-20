@@ -4,6 +4,7 @@ export const UseCaseSymbols = {
     GetOneDeckUseCase: Symbol("GetOneDeckUseCase"),
     GetDecksUseCase: Symbol("GetDecksUseCase"),
     CreateDeckUseCase: Symbol("CreateDeckUseCase"),
+    EditDeckUseCase: Symbol("EditDeckUseCase"),
 
     // Card
     CreateCardUseCase: Symbol("CreateCardUseCase"),
@@ -17,6 +18,7 @@ export const UseCaseSymbols = {
     CreateUserUseCase: Symbol("CreateUserUseCase"),
     UpdateUserUseCase: Symbol("UpdateUserUseCase"),
     GetOneUserUseCase: Symbol("GetOneUserUseCase"),
+    GetOneUserByTelegramIdUseCase: Symbol("GetOneUserByTelegramIdUseCase"),
 
     // Attendance
     MarkUserSubmissionUseCase: Symbol("MarkUserSubmissionUseCase"),

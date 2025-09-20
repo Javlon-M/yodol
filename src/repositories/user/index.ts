@@ -14,6 +14,7 @@ export interface UserRepository {
     remove(params: RemoveParams): Promise<Domain.User>
     update(params: UpdateParams): Promise<Domain.User>
     findById(id: Domain.Identifier): Promise<Domain.User>
+    findByTelegramId(telegramId: number): Promise<Domain.User>
 }
 
 @Inversify.injectable()
@@ -25,14 +26,24 @@ export class UserRepositoryImpl implements UserRepository {
     ){}
 
     public async create(params: CreateParams): Promise<Domain.User> {
-        const user = await this.storage.getUsersCollection().insertOne({
-            phone: params.phone,
-            username: params.username,
-            name: params.name,
-            telegram_id: params.telegramId,
-            email: params.email,
-            created_at: params.createdAt
-        })
+        const user = await this.storage.getUsersCollection().findOneAndUpdate(
+            {
+                username: params.username,
+                name: params.name
+            },
+            {
+                phone: params.phone,
+                username: params.username,
+                name: params.name,
+                telegram_id: params.telegramId,
+                email: params.email,
+                created_at: params.createdAt
+            },
+            {
+                upsert: true,
+                returnDocument: "after"
+            }
+        )
 
         return this.toDomainEntity(user)
     }
@@ -67,11 +78,19 @@ export class UserRepositoryImpl implements UserRepository {
         return this.toDomainEntity(user)
     }
 
+    public async findByTelegramId(telegramId: number): Promise<Domain.User> {
+        const user = await this.storage.getUsersCollection().findOne<Models.UserDocument>({
+            telegram_id: telegramId
+        })
+
+        return this.toDomainEntity(user);
+    }
+
     private toDomainEntity(user: Models.UserDocument): Domain.User {
         if (!user) return null
 
         return this.userFactory.construct({
-            id: this.identifierFactory.construct(user.id),
+            id: this.identifierFactory.construct(user._id as any),
             phone: user.phone,
             username: user.username,
             name: user.name,
